@@ -1,0 +1,4 @@
+create policy "authenticated can read lesson audio" on storage.objects for select to authenticated using (bucket_id = 'lesson-audio');
+create policy "admins upload lesson audio" on storage.objects for insert to authenticated with check (bucket_id = 'lesson-audio' and public.has_role(auth.uid(), 'admin'));
+create policy "admins update lesson audio" on storage.objects for update to authenticated using (bucket_id = 'lesson-audio' and public.has_role(auth.uid(), 'admin'));
+create policy "admins delete lesson audio" on storage.objects for delete to authenticated using (bucket_id = 'lesson-audio' and public.has_role(auth.uid(), 'admin'));
