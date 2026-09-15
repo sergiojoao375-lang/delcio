@@ -1,0 +1,7 @@
+# Delcio-English
+
+> Aprenda inglês ou português conversando com Delcio, um professor virtual com IA. Conversação, correções gentis, áudio e tradução instantânea.
+
+## Pages
+
+- [Home](/): Comece uma conversa com Delcio para praticar inglês ou português.
