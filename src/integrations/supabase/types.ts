@@ -14,16 +14,187 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      conversations: {
+        Row: {
+          created_at: string
+          id: string
+          learning_lang: string
+          lesson_id: string | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          learning_lang?: string
+          lesson_id?: string | null
+          title?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          learning_lang?: string
+          lesson_id?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversations_lesson_id_fkey"
+            columns: ["lesson_id"]
+            isOneToOne: false
+            referencedRelation: "lessons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lessons: {
+        Row: {
+          audio_url: string | null
+          body: string
+          created_at: string
+          created_by: string | null
+          description: string | null
+          exercises: Json
+          id: string
+          language: string
+          level: string
+          published: boolean
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          audio_url?: string | null
+          body?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          exercises?: Json
+          id?: string
+          language?: string
+          level?: string
+          published?: boolean
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          audio_url?: string | null
+          body?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          exercises?: Json
+          id?: string
+          language?: string
+          level?: string
+          published?: boolean
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      messages: {
+        Row: {
+          content: string
+          conversation_id: string
+          correction: string | null
+          created_at: string
+          id: string
+          role: string
+          translation: string | null
+          user_id: string
+        }
+        Insert: {
+          content: string
+          conversation_id: string
+          correction?: string | null
+          created_at?: string
+          id?: string
+          role: string
+          translation?: string | null
+          user_id: string
+        }
+        Update: {
+          content?: string
+          conversation_id?: string
+          correction?: string | null
+          created_at?: string
+          id?: string
+          role?: string
+          translation?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          display_name: string | null
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          display_name?: string | null
+          id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +321,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "user"],
+    },
   },
 } as const
