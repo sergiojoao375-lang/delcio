@@ -10,21 +10,34 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AboutRouteImport } from './routes/about'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as DebugRouteImport } from './routes/debug'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as ApiSttRouteImport } from './routes/api/stt'
 import { Route as ApiTtsRouteImport } from './routes/api/tts'
+import { Route as AuthenticatedAulasIndexRouteImport } from './routes/_authenticated/aulas.index'
+import { Route as AuthenticatedAulasIdRouteImport } from './routes/_authenticated/aulas.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DebugRoute = DebugRouteImport.update({
@@ -52,68 +65,100 @@ const ApiTtsRoute = ApiTtsRouteImport.update({
   path: '/api/tts',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAulasIndexRoute = AuthenticatedAulasIndexRouteImport.update({
+  id: '/aulas/',
+  path: '/aulas/',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAulasIdRoute = AuthenticatedAulasIdRouteImport.update({
+  id: '/aulas/$id',
+  path: '/aulas/$id',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/auth': typeof AuthRoute
   '/debug': typeof DebugRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/api/chat': typeof ApiChatRoute
   '/api/stt': typeof ApiSttRoute
   '/api/tts': typeof ApiTtsRoute
+  '/aulas/$id': typeof AuthenticatedAulasIdRoute
+  '/aulas/': typeof AuthenticatedAulasIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/auth': typeof AuthRoute
   '/debug': typeof DebugRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/api/chat': typeof ApiChatRoute
   '/api/stt': typeof ApiSttRoute
   '/api/tts': typeof ApiTtsRoute
+  '/aulas/$id': typeof AuthenticatedAulasIdRoute
+  '/aulas': typeof AuthenticatedAulasIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/about': typeof AboutRoute
+  '/auth': typeof AuthRoute
   '/debug': typeof DebugRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/api/chat': typeof ApiChatRoute
   '/api/stt': typeof ApiSttRoute
   '/api/tts': typeof ApiTtsRoute
+  '/_authenticated/aulas/$id': typeof AuthenticatedAulasIdRoute
+  '/_authenticated/aulas/': typeof AuthenticatedAulasIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/about'
+    | '/auth'
     | '/debug'
     | '/sitemap.xml'
     | '/api/chat'
     | '/api/stt'
     | '/api/tts'
+    | '/aulas/$id'
+    | '/aulas/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
+    | '/auth'
     | '/debug'
     | '/sitemap.xml'
     | '/api/chat'
     | '/api/stt'
     | '/api/tts'
+    | '/aulas/$id'
+    | '/aulas'
   id:
     | '__root__'
     | '/'
+    | '/_authenticated'
     | '/about'
+    | '/auth'
     | '/debug'
     | '/sitemap.xml'
     | '/api/chat'
     | '/api/stt'
     | '/api/tts'
+    | '/_authenticated/aulas/$id'
+    | '/_authenticated/aulas/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
+  AuthRoute: typeof AuthRoute
   DebugRoute: typeof DebugRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   ApiChatRoute: typeof ApiChatRoute
@@ -130,11 +175,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/about': {
       id: '/about'
       path: '/about'
       fullPath: '/about'
       preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/debug': {
@@ -172,12 +231,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiTtsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/aulas/': {
+      id: '/_authenticated/aulas/'
+      path: '/aulas'
+      fullPath: '/aulas/'
+      preLoaderRoute: typeof AuthenticatedAulasIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/aulas/$id': {
+      id: '/_authenticated/aulas/$id'
+      path: '/aulas/$id'
+      fullPath: '/aulas/$id'
+      preLoaderRoute: typeof AuthenticatedAulasIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAulasIdRoute: typeof AuthenticatedAulasIdRoute
+  AuthenticatedAulasIndexRoute: typeof AuthenticatedAulasIndexRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAulasIdRoute: AuthenticatedAulasIdRoute,
+  AuthenticatedAulasIndexRoute: AuthenticatedAulasIndexRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AboutRoute: AboutRoute,
+  AuthRoute: AuthRoute,
   DebugRoute: DebugRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   ApiChatRoute: ApiChatRoute,
