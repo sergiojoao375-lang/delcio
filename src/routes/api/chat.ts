@@ -10,6 +10,7 @@ type Body = {
   mode?: "chat" | "translate";
   textToTranslate?: string;
   voiceMode?: boolean;
+  lessonContext?: string;
 };
 
 function buildSystemPrompt(userName: string, learningLang: "en" | "pt", voiceMode = false) {
