@@ -15,6 +15,8 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as DebugRouteImport } from './routes/debug'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as AuthenticatedHistoricoRouteImport } from './routes/_authenticated/historico'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as ApiSttRouteImport } from './routes/api/stt'
 import { Route as ApiTtsRouteImport } from './routes/api/tts'
@@ -50,6 +52,16 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedHistoricoRoute = AuthenticatedHistoricoRouteImport.update({
+  id: '/historico',
+  path: '/historico',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const ApiChatRoute = ApiChatRouteImport.update({
   id: '/api/chat',
   path: '/api/chat',
@@ -82,6 +94,8 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/debug': typeof DebugRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/admin': typeof AuthenticatedAdminRoute
+  '/historico': typeof AuthenticatedHistoricoRoute
   '/api/chat': typeof ApiChatRoute
   '/api/stt': typeof ApiSttRoute
   '/api/tts': typeof ApiTtsRoute
@@ -94,6 +108,8 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/debug': typeof DebugRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/admin': typeof AuthenticatedAdminRoute
+  '/historico': typeof AuthenticatedHistoricoRoute
   '/api/chat': typeof ApiChatRoute
   '/api/stt': typeof ApiSttRoute
   '/api/tts': typeof ApiTtsRoute
@@ -108,6 +124,8 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/debug': typeof DebugRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRoute
+  '/_authenticated/historico': typeof AuthenticatedHistoricoRoute
   '/api/chat': typeof ApiChatRoute
   '/api/stt': typeof ApiSttRoute
   '/api/tts': typeof ApiTtsRoute
@@ -122,6 +140,8 @@ export interface FileRouteTypes {
     | '/auth'
     | '/debug'
     | '/sitemap.xml'
+    | '/admin'
+    | '/historico'
     | '/api/chat'
     | '/api/stt'
     | '/api/tts'
@@ -134,6 +154,8 @@ export interface FileRouteTypes {
     | '/auth'
     | '/debug'
     | '/sitemap.xml'
+    | '/admin'
+    | '/historico'
     | '/api/chat'
     | '/api/stt'
     | '/api/tts'
@@ -147,6 +169,8 @@ export interface FileRouteTypes {
     | '/auth'
     | '/debug'
     | '/sitemap.xml'
+    | '/_authenticated/admin'
+    | '/_authenticated/historico'
     | '/api/chat'
     | '/api/stt'
     | '/api/tts'
@@ -210,6 +234,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/historico': {
+      id: '/_authenticated/historico'
+      path: '/historico'
+      fullPath: '/historico'
+      preLoaderRoute: typeof AuthenticatedHistoricoRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/api/chat': {
       id: '/api/chat'
       path: '/api/chat'
@@ -249,11 +287,15 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
+  AuthenticatedHistoricoRoute: typeof AuthenticatedHistoricoRoute
   AuthenticatedAulasIdRoute: typeof AuthenticatedAulasIdRoute
   AuthenticatedAulasIndexRoute: typeof AuthenticatedAulasIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminRoute: AuthenticatedAdminRoute,
+  AuthenticatedHistoricoRoute: AuthenticatedHistoricoRoute,
   AuthenticatedAulasIdRoute: AuthenticatedAulasIdRoute,
   AuthenticatedAulasIndexRoute: AuthenticatedAulasIndexRoute,
 }
