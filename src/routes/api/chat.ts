@@ -58,7 +58,14 @@ export const Route = createFileRoute("/api/chat")({
           const userName = body.userName || "amigo";
           const learningLang = (body.learningLang || "en") as "en" | "pt";
           messages = [
-            { role: "system", content: buildSystemPrompt(userName, learningLang, body.voiceMode === true) },
+            {
+              role: "system",
+              content:
+                buildSystemPrompt(userName, learningLang, body.voiceMode === true) +
+                (body.lessonContext
+                  ? `\n\nCURRENT LESSON CONTEXT (use it to guide the student, ask about it, and check their answers to its exercises):\n${body.lessonContext.slice(0, 4000)}`
+                  : ""),
+            },
             ...(body.messages || []),
           ];
         }
