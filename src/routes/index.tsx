@@ -546,6 +546,7 @@ function Index() {
         setStreak(0);
       }
       speak(correction ? `${correction}. ${rest}` : rest);
+      void persist("assistant", rest, correction);
     } catch (e: any) {
       setBubbles((prev) => [...prev, { id: uid(), kind: "bot", text: `⚠️ ${e.message}`, voiceId }]);
     } finally {
