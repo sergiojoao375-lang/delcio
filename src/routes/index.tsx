@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Mic, Send, Languages, RefreshCcw, Flame, Trophy, Sparkles, PartyPopper, Star, Crown, Play, Volume2 } from "lucide-react";
 import { VOICES, DEFAULT_VOICE_ID, getVoice } from "@/lib/voices";
@@ -6,6 +6,10 @@ import { SpeakingAvatar } from "@/components/speaking-avatar";
 import { fetchWithRetry } from "@/lib/api-client";
 import { useOnlineStatus } from "@/hooks/use-online-status";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useAuth } from "@/hooks/use-auth";
+import { supabase } from "@/integrations/supabase/client";
+import { useQueryClient } from "@tanstack/react-query";
+import { addMessage, createConversation, getMyAccess } from "@/lib/db.functions";
 
 
 
@@ -134,6 +138,70 @@ function Index() {
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [bubbles, loading]);
+
+  /* ---- conta e histórico ---- */
+  const { user, signedIn } = useAuth();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const [isAdmin, setIsAdmin] = useState(false);
+  const conversationIdRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (!signedIn) {
+      setIsAdmin(false);
+      return;
+    }
+    getMyAccess()
+      .then((a) => {
+        setIsAdmin(a.isAdmin);
+        if (a.displayName && !name) setName(a.displayName);
+      })
+      .catch(() => setIsAdmin(false));
+  }, [signedIn]);
+
+  useEffect(() => {
+    if (name.trim()) localStorage.setItem("delcio.name", name.trim());
+  }, [name]);
+
+  async function ensureConversation() {
+    if (!signedIn) return null;
+    if (conversationIdRef.current) return conversationIdRef.current;
+    try {
+      const { id } = await createConversation({
+        data: {
+          title: `Conversa de ${name || "aluno"} — ${new Date().toLocaleDateString("pt-BR")}`,
+          learningLang,
+          lessonId: null,
+        },
+      });
+      conversationIdRef.current = id;
+      return id;
+    } catch {
+      return null;
+    }
+  }
+
+  async function persist(
+    role: "user" | "assistant",
+    content: string,
+    correction?: string | null,
+  ) {
+    const id = await ensureConversation();
+    if (!id || !content.trim()) return;
+    try {
+      await addMessage({ data: { conversationId: id, role, content, correction: correction ?? null } });
+    } catch {
+      /* histórico é opcional */
+    }
+  }
+
+  async function handleSignOut() {
+    await queryClient.cancelQueries();
+    queryClient.clear();
+    conversationIdRef.current = null;
+    await supabase.auth.signOut();
+    navigate({ to: "/auth", replace: true });
+  }
 
   const levelIndex = Math.min(Math.floor(score / 80), LEVELS.length - 1);
   const level = LEVELS[levelIndex];
@@ -434,6 +502,7 @@ function Index() {
       newBubbles.push({ id: uid(), kind: "bot", text: rest, voiceId });
       setBubbles(newBubbles);
       speak(correction ? `${correction}. ${rest}` : rest);
+      void persist("assistant", rest, correction);
     } catch (e: any) {
       setBubbles([{ id: uid(), kind: "bot", text: `⚠️ ${e.message}`, voiceId }]);
     } finally {
@@ -449,6 +518,7 @@ function Index() {
     const nextBubbles = [...bubbles, userBubble];
     setBubbles(nextBubbles);
     setLoading(true);
+    void persist("user", text);
     try {
       const history = [
         ...apiHistory,
@@ -478,6 +548,7 @@ function Index() {
         setStreak(0);
       }
       speak(correction ? `${correction}. ${rest}` : rest);
+      void persist("assistant", rest, correction);
     } catch (e: any) {
       setBubbles((prev) => [...prev, { id: uid(), kind: "bot", text: `⚠️ ${e.message}`, voiceId }]);
     } finally {
@@ -794,6 +865,45 @@ function Index() {
             <span className="shrink-0 bg-white/10 rounded-full px-2 sm:px-3 py-1 flex items-center gap-1">
               <Flame className="w-3.5 h-3.5" /> {streak}
             </span>
+            <Link
+              to="/aulas"
+              className="shrink-0 bg-white/10 hover:bg-white/20 transition rounded-full px-2 sm:px-3 py-1 text-[11px] sm:text-[12px] font-medium"
+            >
+              Aulas
+            </Link>
+            {signedIn && (
+              <Link
+                to="/historico"
+                className="shrink-0 bg-white/10 hover:bg-white/20 transition rounded-full px-2 sm:px-3 py-1 text-[11px] sm:text-[12px] font-medium"
+              >
+                Histórico
+              </Link>
+            )}
+            {isAdmin && (
+              <Link
+                to="/admin"
+                className="shrink-0 bg-white/10 hover:bg-white/20 transition rounded-full px-2 sm:px-3 py-1 text-[11px] sm:text-[12px] font-medium"
+              >
+                Painel
+              </Link>
+            )}
+            {signedIn ? (
+              <button
+                type="button"
+                onClick={handleSignOut}
+                title={user?.email ?? undefined}
+                className="shrink-0 bg-white/10 hover:bg-white/20 transition rounded-full px-2 sm:px-3 py-1 text-[11px] sm:text-[12px] font-medium"
+              >
+                Sair
+              </button>
+            ) : (
+              <Link
+                to="/auth"
+                className="shrink-0 bg-white/20 hover:bg-white/30 transition rounded-full px-2 sm:px-3 py-1 text-[11px] sm:text-[12px] font-semibold"
+              >
+                Entrar
+              </Link>
+            )}
             <Link
               to="/about"
               className="shrink-0 bg-white/10 hover:bg-white/20 transition rounded-full px-2 sm:px-3 py-1 text-[11px] sm:text-[12px] font-medium"
