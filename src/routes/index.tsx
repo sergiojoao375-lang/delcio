@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Mic, Send, Languages, RefreshCcw, Flame, Trophy, Sparkles, PartyPopper, Star, Crown, Play, Volume2 } from "lucide-react";
 import { VOICES, DEFAULT_VOICE_ID, getVoice } from "@/lib/voices";
@@ -6,6 +6,10 @@ import { SpeakingAvatar } from "@/components/speaking-avatar";
 import { fetchWithRetry } from "@/lib/api-client";
 import { useOnlineStatus } from "@/hooks/use-online-status";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useAuth } from "@/hooks/use-auth";
+import { supabase } from "@/integrations/supabase/client";
+import { useQueryClient } from "@tanstack/react-query";
+import { addMessage, createConversation, getMyAccess } from "@/lib/db.functions";
 
 
 
