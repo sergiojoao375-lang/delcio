@@ -866,6 +866,45 @@ function Index() {
               <Flame className="w-3.5 h-3.5" /> {streak}
             </span>
             <Link
+              to="/aulas"
+              className="shrink-0 bg-white/10 hover:bg-white/20 transition rounded-full px-2 sm:px-3 py-1 text-[11px] sm:text-[12px] font-medium"
+            >
+              Aulas
+            </Link>
+            {signedIn && (
+              <Link
+                to="/historico"
+                className="shrink-0 bg-white/10 hover:bg-white/20 transition rounded-full px-2 sm:px-3 py-1 text-[11px] sm:text-[12px] font-medium"
+              >
+                Histórico
+              </Link>
+            )}
+            {isAdmin && (
+              <Link
+                to="/admin"
+                className="shrink-0 bg-white/10 hover:bg-white/20 transition rounded-full px-2 sm:px-3 py-1 text-[11px] sm:text-[12px] font-medium"
+              >
+                Painel
+              </Link>
+            )}
+            {signedIn ? (
+              <button
+                type="button"
+                onClick={handleSignOut}
+                title={user?.email ?? undefined}
+                className="shrink-0 bg-white/10 hover:bg-white/20 transition rounded-full px-2 sm:px-3 py-1 text-[11px] sm:text-[12px] font-medium"
+              >
+                Sair
+              </button>
+            ) : (
+              <Link
+                to="/auth"
+                className="shrink-0 bg-white/20 hover:bg-white/30 transition rounded-full px-2 sm:px-3 py-1 text-[11px] sm:text-[12px] font-semibold"
+              >
+                Entrar
+              </Link>
+            )}
+            <Link
               to="/about"
               className="shrink-0 bg-white/10 hover:bg-white/20 transition rounded-full px-2 sm:px-3 py-1 text-[11px] sm:text-[12px] font-medium"
             >
