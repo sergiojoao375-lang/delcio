@@ -517,6 +517,7 @@ function Index() {
     const nextBubbles = [...bubbles, userBubble];
     setBubbles(nextBubbles);
     setLoading(true);
+    void persist("user", text);
     try {
       const history = [
         ...apiHistory,
