@@ -139,6 +139,70 @@ function Index() {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [bubbles, loading]);
 
+  /* ---- conta e histórico ---- */
+  const { user, signedIn } = useAuth();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const [isAdmin, setIsAdmin] = useState(false);
+  const conversationIdRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (!signedIn) {
+      setIsAdmin(false);
+      return;
+    }
+    getMyAccess()
+      .then((a) => {
+        setIsAdmin(a.isAdmin);
+        if (a.displayName && !name) setName(a.displayName);
+      })
+      .catch(() => setIsAdmin(false));
+  }, [signedIn]);
+
+  useEffect(() => {
+    if (name.trim()) localStorage.setItem("delcio.name", name.trim());
+  }, [name]);
+
+  async function ensureConversation() {
+    if (!signedIn) return null;
+    if (conversationIdRef.current) return conversationIdRef.current;
+    try {
+      const { id } = await createConversation({
+        data: {
+          title: `Conversa de ${name || "aluno"} — ${new Date().toLocaleDateString("pt-BR")}`,
+          learningLang,
+          lessonId: null,
+        },
+      });
+      conversationIdRef.current = id;
+      return id;
+    } catch {
+      return null;
+    }
+  }
+
+  async function persist(
+    role: "user" | "assistant",
+    content: string,
+    correction?: string | null,
+  ) {
+    const id = await ensureConversation();
+    if (!id || !content.trim()) return;
+    try {
+      await addMessage({ data: { conversationId: id, role, content, correction: correction ?? null } });
+    } catch {
+      /* histórico é opcional */
+    }
+  }
+
+  async function handleSignOut() {
+    await queryClient.cancelQueries();
+    queryClient.clear();
+    conversationIdRef.current = null;
+    await supabase.auth.signOut();
+    navigate({ to: "/auth", replace: true });
+  }
+
   const levelIndex = Math.min(Math.floor(score / 80), LEVELS.length - 1);
   const level = LEVELS[levelIndex];
   const nextLevel = levelIndex < LEVELS.length - 1 ? LEVELS[levelIndex + 1] : null;
