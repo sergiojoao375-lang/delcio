@@ -502,6 +502,7 @@ function Index() {
       newBubbles.push({ id: uid(), kind: "bot", text: rest, voiceId });
       setBubbles(newBubbles);
       speak(correction ? `${correction}. ${rest}` : rest);
+      void persist("assistant", rest, correction);
     } catch (e: any) {
       setBubbles([{ id: uid(), kind: "bot", text: `⚠️ ${e.message}`, voiceId }]);
     } finally {
