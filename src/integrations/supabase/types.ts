@@ -60,10 +60,13 @@ export type Database = {
           created_by: string | null
           description: string | null
           exercises: Json
+          focus: string | null
           id: string
           language: string
           level: string
+          owner_id: string | null
           published: boolean
+          source: string
           title: string
           updated_at: string
         }
@@ -74,10 +77,13 @@ export type Database = {
           created_by?: string | null
           description?: string | null
           exercises?: Json
+          focus?: string | null
           id?: string
           language?: string
           level?: string
+          owner_id?: string | null
           published?: boolean
+          source?: string
           title: string
           updated_at?: string
         }
@@ -88,10 +94,13 @@ export type Database = {
           created_by?: string | null
           description?: string | null
           exercises?: Json
+          focus?: string | null
           id?: string
           language?: string
           level?: string
+          owner_id?: string | null
           published?: boolean
+          source?: string
           title?: string
           updated_at?: string
         }
