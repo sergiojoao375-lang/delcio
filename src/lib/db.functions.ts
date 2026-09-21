@@ -20,6 +20,9 @@ export type Lesson = {
   published: boolean;
   created_at: string;
   updated_at: string;
+  owner_id: string | null;
+  source: string;
+  focus: string | null;
 };
 
 function parseExercises(value: unknown): LessonExercise[] {
@@ -48,6 +51,9 @@ function mapLesson(row: any): Lesson {
     published: !!row.published,
     created_at: row.created_at,
     updated_at: row.updated_at,
+    owner_id: row.owner_id ?? null,
+    source: row.source ?? "admin",
+    focus: row.focus ?? null,
   };
 }
 
