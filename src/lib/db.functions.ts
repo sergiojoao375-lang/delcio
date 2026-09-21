@@ -20,6 +20,9 @@ export type Lesson = {
   published: boolean;
   created_at: string;
   updated_at: string;
+  owner_id: string | null;
+  source: string;
+  focus: string | null;
 };
 
 function parseExercises(value: unknown): LessonExercise[] {
