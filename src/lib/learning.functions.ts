@@ -216,99 +216,106 @@ export const updateDailyGoal = createServerFn({ method: "POST" })
 /* daily activity, streak, shields                                    */
 /* ------------------------------------------------------------------ */
 
+async function applyActivity(
+  supabase: any,
+  userId: string,
+  input: { minutes?: number; xp?: number; exercises?: number },
+) {
+  const minutes = Math.max(0, Math.min(30, Math.round(input.minutes ?? 0)));
+  const xp = Math.max(0, Math.min(200, Math.round(input.xp ?? 0)));
+  const exercises = Math.max(0, Math.min(20, Math.round(input.exercises ?? 0)));
+  if (!minutes && !xp && !exercises) return { ok: true as const, skipped: true as const };
+
+  const profile = await loadOrCreateProfile(supabase, userId);
+  const day = todayISO();
+
+  const { data: existing } = await supabase
+    .from("daily_activity")
+    .select("id, minutes, xp, exercises, goal_met")
+    .eq("user_id", userId)
+    .eq("day", day)
+    .maybeSingle();
+
+  const totalMinutes = (existing?.minutes ?? 0) + minutes;
+  const totalXp = (existing?.xp ?? 0) + xp;
+  const goalMet = totalMinutes >= (profile.daily_goal_minutes as number);
+
+  if (existing) {
+    await supabase
+      .from("daily_activity")
+      .update({
+        minutes: totalMinutes,
+        xp: totalXp,
+        exercises: (existing.exercises ?? 0) + exercises,
+        goal_met: goalMet || existing.goal_met,
+      })
+      .eq("id", existing.id);
+  } else {
+    await supabase.from("daily_activity").insert({
+      user_id: userId,
+      day,
+      minutes: totalMinutes,
+      xp: totalXp,
+      exercises,
+      goal_met: goalMet,
+    });
+  }
+
+  // ofensiva: conta o dia quando a meta e cumprida (escudos cobrem faltas)
+  let streak = profile.streak_current as number;
+  let shields = profile.shields as number;
+  let last = (profile.last_active_date as string | null) ?? null;
+  let shieldUsed = 0;
+
+  if (goalMet && last !== day) {
+    const gap = last ? dayDiff(last, day) : null;
+    if (last === null) {
+      streak = 1;
+    } else if (gap === 1) {
+      streak = streak + 1;
+    } else if (gap !== null && gap > 1) {
+      const missed = gap - 1;
+      if (shields >= missed) {
+        shields -= missed;
+        shieldUsed = missed;
+        streak = streak + 1;
+      } else {
+        streak = 1;
+      }
+    }
+    last = day;
+  }
+
+  const { data: updated, error } = await supabase
+    .from("learner_profiles")
+    .update({
+      points: (profile.points as number) + xp,
+      xp_total: (profile.xp_total as number) + xp,
+      streak_current: streak,
+      streak_best: Math.max(profile.streak_best as number, streak),
+      shields,
+      last_active_date: last,
+    })
+    .eq("user_id", userId)
+    .select("*")
+    .single();
+  if (error) throw new Error(error.message);
+
+  const levelXp = await xpInCurrentLevel(supabase, userId, updated.level_started_at);
+  return {
+    ok: true as const,
+    skipped: false as const,
+    shieldUsed,
+    goalMet,
+    todayMinutes: totalMinutes,
+    ...summarize(updated, levelXp),
+  };
+}
+
 export const recordActivity = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: { minutes?: number; xp?: number; exercises?: number }) => d)
-  .handler(async ({ data, context }) => {
-    const { supabase, userId } = context;
-    const minutes = Math.max(0, Math.min(30, Math.round(data.minutes ?? 0)));
-    const xp = Math.max(0, Math.min(200, Math.round(data.xp ?? 0)));
-    const exercises = Math.max(0, Math.min(20, Math.round(data.exercises ?? 0)));
-    if (!minutes && !xp && !exercises) return { ok: true as const, skipped: true as const };
-
-    const profile = await loadOrCreateProfile(supabase, userId);
-    const day = todayISO();
-
-    const { data: existing } = await supabase
-      .from("daily_activity")
-      .select("id, minutes, xp, exercises, goal_met")
-      .eq("user_id", userId)
-      .eq("day", day)
-      .maybeSingle();
-
-    const totalMinutes = (existing?.minutes ?? 0) + minutes;
-    const totalXp = (existing?.xp ?? 0) + xp;
-    const goalMet = totalMinutes >= (profile.daily_goal_minutes as number);
-
-    if (existing) {
-      await supabase
-        .from("daily_activity")
-        .update({
-          minutes: totalMinutes,
-          xp: totalXp,
-          exercises: (existing.exercises ?? 0) + exercises,
-          goal_met: goalMet || existing.goal_met,
-        })
-        .eq("id", existing.id);
-    } else {
-      await supabase.from("daily_activity").insert({
-        user_id: userId,
-        day,
-        minutes: totalMinutes,
-        xp: totalXp,
-        exercises,
-        goal_met: goalMet,
-      });
-    }
-
-    // ofensiva: conta o dia quando a meta é cumprida (com escudo cobrindo faltas)
-    let streak = profile.streak_current as number;
-    let shields = profile.shields as number;
-    let last = (profile.last_active_date as string | null) ?? null;
-    let shieldUsed = 0;
-
-    if (goalMet && last !== day) {
-      const gap = last ? dayDiff(last, day) : null;
-      if (gap === 1 || last === null) {
-        streak = last === null ? 1 : streak + 1;
-      } else if (gap !== null && gap > 1) {
-        const missed = gap - 1;
-        if (shields >= missed) {
-          shields -= missed;
-          shieldUsed = missed;
-          streak = streak + 1;
-        } else {
-          streak = 1;
-        }
-      }
-      last = day;
-    }
-
-    const { data: updated, error } = await supabase
-      .from("learner_profiles")
-      .update({
-        points: (profile.points as number) + xp,
-        xp_total: (profile.xp_total as number) + xp,
-        streak_current: streak,
-        streak_best: Math.max(profile.streak_best as number, streak),
-        shields,
-        last_active_date: last,
-      })
-      .eq("user_id", userId)
-      .select("*")
-      .single();
-    if (error) throw new Error(error.message);
-
-    const levelXp = await xpInCurrentLevel(supabase, userId, updated.level_started_at);
-    return {
-      ok: true as const,
-      skipped: false as const,
-      shieldUsed,
-      goalMet,
-      todayMinutes: totalMinutes,
-      ...summarize(updated, levelXp),
-    };
-  });
+  .handler(async ({ data, context }) => applyActivity(context.supabase, context.userId, data));
 
 export const buyShield = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -354,7 +361,7 @@ Reply ONLY with JSON: {"correct": boolean, "score": 0-10, "feedback": "1-2 short
     const correct = result?.correct === true;
     const score = Math.max(0, Math.min(10, Number(result?.score) || (correct ? 10 : 0)));
     const xp = correct ? 15 : 5;
-    await recordActivity({ data: { xp, exercises: 1 } });
+    await applyActivity(context.supabase, context.userId, { xp, exercises: 1 });
     return {
       correct,
       score,
