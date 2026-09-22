@@ -52,6 +52,96 @@ export type Database = {
           },
         ]
       }
+      daily_activity: {
+        Row: {
+          created_at: string
+          day: string
+          exercises: number
+          goal_met: boolean
+          id: string
+          minutes: number
+          updated_at: string
+          user_id: string
+          xp: number
+        }
+        Insert: {
+          created_at?: string
+          day?: string
+          exercises?: number
+          goal_met?: boolean
+          id?: string
+          minutes?: number
+          updated_at?: string
+          user_id: string
+          xp?: number
+        }
+        Update: {
+          created_at?: string
+          day?: string
+          exercises?: number
+          goal_met?: boolean
+          id?: string
+          minutes?: number
+          updated_at?: string
+          user_id?: string
+          xp?: number
+        }
+        Relationships: []
+      }
+      learner_profiles: {
+        Row: {
+          created_at: string
+          daily_goal_minutes: number
+          last_active_date: string | null
+          level: string
+          level_started_at: string
+          onboarding_done: boolean
+          placement_done: boolean
+          plan_started_at: string
+          points: number
+          shields: number
+          streak_best: number
+          streak_current: number
+          updated_at: string
+          user_id: string
+          xp_total: number
+        }
+        Insert: {
+          created_at?: string
+          daily_goal_minutes?: number
+          last_active_date?: string | null
+          level?: string
+          level_started_at?: string
+          onboarding_done?: boolean
+          placement_done?: boolean
+          plan_started_at?: string
+          points?: number
+          shields?: number
+          streak_best?: number
+          streak_current?: number
+          updated_at?: string
+          user_id: string
+          xp_total?: number
+        }
+        Update: {
+          created_at?: string
+          daily_goal_minutes?: number
+          last_active_date?: string | null
+          level?: string
+          level_started_at?: string
+          onboarding_done?: boolean
+          placement_done?: boolean
+          plan_started_at?: string
+          points?: number
+          shields?: number
+          streak_best?: number
+          streak_current?: number
+          updated_at?: string
+          user_id?: string
+          xp_total?: number
+        }
+        Relationships: []
+      }
       lessons: {
         Row: {
           audio_url: string | null
@@ -103,6 +193,54 @@ export type Database = {
           source?: string
           title?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      level_tests: {
+        Row: {
+          answers: Json
+          created_at: string
+          feedback: string | null
+          from_level: string | null
+          id: string
+          kind: string
+          passed: boolean | null
+          questions: Json
+          score: number | null
+          status: string
+          to_level: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          answers?: Json
+          created_at?: string
+          feedback?: string | null
+          from_level?: string | null
+          id?: string
+          kind?: string
+          passed?: boolean | null
+          questions?: Json
+          score?: number | null
+          status?: string
+          to_level?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          answers?: Json
+          created_at?: string
+          feedback?: string | null
+          from_level?: string | null
+          id?: string
+          kind?: string
+          passed?: boolean | null
+          questions?: Json
+          score?: number | null
+          status?: string
+          to_level?: string | null
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
