@@ -18,6 +18,7 @@ import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedHistoricoRouteImport } from './routes/_authenticated/historico'
 import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
+import { Route as AuthenticatedProgressoRouteImport } from './routes/_authenticated/progresso'
 import { Route as AuthenticatedTesteRouteImport } from './routes/_authenticated/teste'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as ApiSttRouteImport } from './routes/api/stt'
@@ -69,6 +70,11 @@ const AuthenticatedOnboardingRoute = AuthenticatedOnboardingRouteImport.update({
   path: '/onboarding',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedProgressoRoute = AuthenticatedProgressoRouteImport.update({
+  id: '/progresso',
+  path: '/progresso',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedTesteRoute = AuthenticatedTesteRouteImport.update({
   id: '/teste',
   path: '/teste',
@@ -109,6 +115,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AuthenticatedAdminRoute
   '/historico': typeof AuthenticatedHistoricoRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
+  '/progresso': typeof AuthenticatedProgressoRoute
   '/teste': typeof AuthenticatedTesteRoute
   '/api/chat': typeof ApiChatRoute
   '/api/stt': typeof ApiSttRoute
@@ -125,6 +132,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AuthenticatedAdminRoute
   '/historico': typeof AuthenticatedHistoricoRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
+  '/progresso': typeof AuthenticatedProgressoRoute
   '/teste': typeof AuthenticatedTesteRoute
   '/api/chat': typeof ApiChatRoute
   '/api/stt': typeof ApiSttRoute
@@ -143,6 +151,7 @@ export interface FileRoutesById {
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/historico': typeof AuthenticatedHistoricoRoute
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
+  '/_authenticated/progresso': typeof AuthenticatedProgressoRoute
   '/_authenticated/teste': typeof AuthenticatedTesteRoute
   '/api/chat': typeof ApiChatRoute
   '/api/stt': typeof ApiSttRoute
@@ -161,6 +170,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/historico'
     | '/onboarding'
+    | '/progresso'
     | '/teste'
     | '/api/chat'
     | '/api/stt'
@@ -177,6 +187,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/historico'
     | '/onboarding'
+    | '/progresso'
     | '/teste'
     | '/api/chat'
     | '/api/stt'
@@ -194,6 +205,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin'
     | '/_authenticated/historico'
     | '/_authenticated/onboarding'
+    | '/_authenticated/progresso'
     | '/_authenticated/teste'
     | '/api/chat'
     | '/api/stt'
@@ -279,6 +291,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedOnboardingRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/progresso': {
+      id: '/_authenticated/progresso'
+      path: '/progresso'
+      fullPath: '/progresso'
+      preLoaderRoute: typeof AuthenticatedProgressoRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/teste': {
       id: '/_authenticated/teste'
       path: '/teste'
@@ -328,6 +347,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
   AuthenticatedHistoricoRoute: typeof AuthenticatedHistoricoRoute
   AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
+  AuthenticatedProgressoRoute: typeof AuthenticatedProgressoRoute
   AuthenticatedTesteRoute: typeof AuthenticatedTesteRoute
   AuthenticatedAulasIdRoute: typeof AuthenticatedAulasIdRoute
   AuthenticatedAulasIndexRoute: typeof AuthenticatedAulasIndexRoute
@@ -337,6 +357,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRoute,
   AuthenticatedHistoricoRoute: AuthenticatedHistoricoRoute,
   AuthenticatedOnboardingRoute: AuthenticatedOnboardingRoute,
+  AuthenticatedProgressoRoute: AuthenticatedProgressoRoute,
   AuthenticatedTesteRoute: AuthenticatedTesteRoute,
   AuthenticatedAulasIdRoute: AuthenticatedAulasIdRoute,
   AuthenticatedAulasIndexRoute: AuthenticatedAulasIndexRoute,
