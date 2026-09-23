@@ -10,6 +10,8 @@ import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { addMessage, createConversation, getMyAccess } from "@/lib/db.functions";
+import { getLearner } from "@/lib/learning.functions";
+import { usePractice } from "@/hooks/use-practice";
 
 
 
@@ -157,7 +159,14 @@ function Index() {
         if (a.displayName && !name) setName(a.displayName);
       })
       .catch(() => setIsAdmin(false));
+    getLearner()
+      .then((l) => {
+        if (!l.onboardingDone) navigate({ to: "/onboarding" });
+      })
+      .catch(() => {});
   }, [signedIn]);
+
+  usePractice(signedIn);
 
   useEffect(() => {
     if (name.trim()) localStorage.setItem("delcio.name", name.trim());
@@ -871,6 +880,14 @@ function Index() {
             >
               Aulas
             </Link>
+            {signedIn && (
+              <Link
+                to="/progresso"
+                className="shrink-0 bg-white/10 hover:bg-white/20 transition rounded-full px-2 sm:px-3 py-1 text-[11px] sm:text-[12px] font-medium"
+              >
+                Progresso
+              </Link>
+            )}
             {signedIn && (
               <Link
                 to="/historico"
