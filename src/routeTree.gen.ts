@@ -17,6 +17,8 @@ import { Route as DebugRouteImport } from './routes/debug'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedHistoricoRouteImport } from './routes/_authenticated/historico'
+import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
+import { Route as AuthenticatedTesteRouteImport } from './routes/_authenticated/teste'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as ApiSttRouteImport } from './routes/api/stt'
 import { Route as ApiTtsRouteImport } from './routes/api/tts'
@@ -62,6 +64,16 @@ const AuthenticatedHistoricoRoute = AuthenticatedHistoricoRouteImport.update({
   path: '/historico',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedOnboardingRoute = AuthenticatedOnboardingRouteImport.update({
+  id: '/onboarding',
+  path: '/onboarding',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedTesteRoute = AuthenticatedTesteRouteImport.update({
+  id: '/teste',
+  path: '/teste',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const ApiChatRoute = ApiChatRouteImport.update({
   id: '/api/chat',
   path: '/api/chat',
@@ -96,6 +108,8 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/historico': typeof AuthenticatedHistoricoRoute
+  '/onboarding': typeof AuthenticatedOnboardingRoute
+  '/teste': typeof AuthenticatedTesteRoute
   '/api/chat': typeof ApiChatRoute
   '/api/stt': typeof ApiSttRoute
   '/api/tts': typeof ApiTtsRoute
@@ -110,6 +124,8 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/historico': typeof AuthenticatedHistoricoRoute
+  '/onboarding': typeof AuthenticatedOnboardingRoute
+  '/teste': typeof AuthenticatedTesteRoute
   '/api/chat': typeof ApiChatRoute
   '/api/stt': typeof ApiSttRoute
   '/api/tts': typeof ApiTtsRoute
@@ -126,6 +142,8 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/historico': typeof AuthenticatedHistoricoRoute
+  '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
+  '/_authenticated/teste': typeof AuthenticatedTesteRoute
   '/api/chat': typeof ApiChatRoute
   '/api/stt': typeof ApiSttRoute
   '/api/tts': typeof ApiTtsRoute
@@ -142,6 +160,8 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/admin'
     | '/historico'
+    | '/onboarding'
+    | '/teste'
     | '/api/chat'
     | '/api/stt'
     | '/api/tts'
@@ -156,6 +176,8 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/admin'
     | '/historico'
+    | '/onboarding'
+    | '/teste'
     | '/api/chat'
     | '/api/stt'
     | '/api/tts'
@@ -171,6 +193,8 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/_authenticated/admin'
     | '/_authenticated/historico'
+    | '/_authenticated/onboarding'
+    | '/_authenticated/teste'
     | '/api/chat'
     | '/api/stt'
     | '/api/tts'
@@ -248,6 +272,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedHistoricoRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/onboarding': {
+      id: '/_authenticated/onboarding'
+      path: '/onboarding'
+      fullPath: '/onboarding'
+      preLoaderRoute: typeof AuthenticatedOnboardingRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/teste': {
+      id: '/_authenticated/teste'
+      path: '/teste'
+      fullPath: '/teste'
+      preLoaderRoute: typeof AuthenticatedTesteRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/api/chat': {
       id: '/api/chat'
       path: '/api/chat'
@@ -289,6 +327,8 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
   AuthenticatedHistoricoRoute: typeof AuthenticatedHistoricoRoute
+  AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
+  AuthenticatedTesteRoute: typeof AuthenticatedTesteRoute
   AuthenticatedAulasIdRoute: typeof AuthenticatedAulasIdRoute
   AuthenticatedAulasIndexRoute: typeof AuthenticatedAulasIndexRoute
 }
@@ -296,6 +336,8 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRoute,
   AuthenticatedHistoricoRoute: AuthenticatedHistoricoRoute,
+  AuthenticatedOnboardingRoute: AuthenticatedOnboardingRoute,
+  AuthenticatedTesteRoute: AuthenticatedTesteRoute,
   AuthenticatedAulasIdRoute: AuthenticatedAulasIdRoute,
   AuthenticatedAulasIndexRoute: AuthenticatedAulasIndexRoute,
 }
