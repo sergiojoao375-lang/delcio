@@ -148,6 +148,7 @@ function LessonPage() {
   const { data } = useSuspenseQuery(lessonQuery(id));
   const lesson = data!;
   const audioSrc = useAudioSrc(lesson.audio_url);
+  usePractice(true);
   const [name, setName] = useState("amigo");
 
   useEffect(() => {
