@@ -220,6 +220,11 @@ export const addMessage = createServerFn({ method: "POST" })
       translation: data.translation || null,
     });
     if (error) throw new Error(error.message);
+    if (data.role === "assistant" && data.correction && data.correction.trim()) {
+      await context.supabase
+        .from("vocab_items")
+        .insert({ user_id: context.userId, correction: data.correction.trim().slice(0, 500) });
+    }
     await context.supabase
       .from("conversations")
       .update({ updated_at: new Date().toISOString() })

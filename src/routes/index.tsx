@@ -103,6 +103,7 @@ function Index() {
 
 
   const [score, setScore] = useState(0);
+  const [learner, setLearner] = useState<{ level: string; streak: number; goal: number; today: number } | null>(null);
   const [streak, setStreak] = useState(0);
   const [turns, setTurns] = useState(0); // for progress
   const online = useOnlineStatus();
@@ -162,6 +163,13 @@ function Index() {
     getLearner()
       .then((l) => {
         if (!l.onboardingDone) navigate({ to: "/onboarding" });
+        const la = l as any;
+        setLearner({
+          level: la.level,
+          streak: la.streak ?? 0,
+          goal: la.dailyGoalMinutes ?? 15,
+          today: la.today?.minutes ?? la.todayMinutes ?? 0,
+        });
       })
       .catch(() => {});
   }, [signedIn]);
@@ -537,6 +545,7 @@ function Index() {
         messages: history,
         userName: name,
         learningLang,
+        level: learner?.level,
         voiceMode: mode === "voice",
       });
       const { clean, correct } = stripScore(content);
@@ -880,6 +889,18 @@ function Index() {
             >
               Aulas
             </Link>
+            {signedIn && (
+              <>
+                <Link to="/roleplay" className="shrink-0 bg-white/10 hover:bg-white/20 transition rounded-full px-2 sm:px-3 py-1 text-[11px] sm:text-[12px] font-medium">Cenários</Link>
+                <Link to="/vocabulario" className="shrink-0 bg-white/10 hover:bg-white/20 transition rounded-full px-2 sm:px-3 py-1 text-[11px] sm:text-[12px] font-medium">Palavras</Link>
+                <Link to="/pronuncia" className="shrink-0 bg-white/10 hover:bg-white/20 transition rounded-full px-2 sm:px-3 py-1 text-[11px] sm:text-[12px] font-medium">Pronúncia</Link>
+              </>
+            )}
+            {learner && (
+              <span className="shrink-0 bg-white/10 rounded-full px-2 sm:px-3 py-1 text-[11px] sm:text-[12px]" title="Meta de hoje">
+                ⏱ {learner.today}/{learner.goal} min · 🔥 {learner.streak}
+              </span>
+            )}
             {signedIn && (
               <Link
                 to="/progresso"

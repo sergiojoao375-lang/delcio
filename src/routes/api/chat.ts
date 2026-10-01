@@ -11,6 +11,7 @@ type Body = {
   textToTranslate?: string;
   voiceMode?: boolean;
   lessonContext?: string;
+  level?: string;
 };
 
 function buildSystemPrompt(userName: string, learningLang: "en" | "pt", voiceMode = false) {
@@ -62,6 +63,9 @@ export const Route = createFileRoute("/api/chat")({
               role: "system",
               content:
                 buildSystemPrompt(userName, learningLang, body.voiceMode === true) +
+                (body.level
+                  ? `\n\nSTUDENT LEVEL: ${String(body.level).slice(0, 20)} (beginner=A1, elementary=A2, intermediate=B1, advanced=B2). Adapt vocabulary, sentence length and complexity to this level.`
+                  : "") +
                 (body.lessonContext
                   ? `\n\nCURRENT LESSON CONTEXT (use it to guide the student, ask about it, and check their answers to its exercises):\n${body.lessonContext.slice(0, 4000)}`
                   : ""),
