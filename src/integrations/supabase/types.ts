@@ -327,6 +327,36 @@ export type Database = {
         }
         Relationships: []
       }
+      vocab_items: {
+        Row: {
+          box: number
+          correction: string
+          created_at: string
+          due_at: string
+          id: string
+          original: string | null
+          user_id: string
+        }
+        Insert: {
+          box?: number
+          correction: string
+          created_at?: string
+          due_at?: string
+          id?: string
+          original?: string | null
+          user_id: string
+        }
+        Update: {
+          box?: number
+          correction?: string
+          created_at?: string
+          due_at?: string
+          id?: string
+          original?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

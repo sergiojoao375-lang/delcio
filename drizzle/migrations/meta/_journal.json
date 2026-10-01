@@ -15,6 +15,13 @@
       "when": 1790066024133,
       "tag": "0001_learning_plan_streak_tests",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1790866548254,
+      "tag": "0002_vocab_items",
+      "breakpoints": true
     }
   ]
 }
