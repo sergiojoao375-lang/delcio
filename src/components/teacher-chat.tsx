@@ -32,7 +32,9 @@ export function TeacherChat({
   lessonTitle,
   starter,
   voiceId = DEFAULT_VOICE_ID,
+  level,
 }: {
+  level?: string;
   userName: string;
   learningLang: "en" | "pt";
   lessonContext?: string;
@@ -129,7 +131,7 @@ export function TeacherChat({
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ messages: history, userName, learningLang, lessonContext }),
+          body: JSON.stringify({ messages: history, userName, learningLang, lessonContext, level }),
         },
         { timeoutMs: 60_000 }
       );
@@ -152,7 +154,7 @@ export function TeacherChat({
   return (
     <div className="rounded-2xl border border-border bg-card">
       <div className="flex items-center justify-between border-b border-border px-4 py-3">
-        <h2 className="font-semibold text-primary-dark">Fale com o Delcio sobre esta aula</h2>
+        <h2 className="font-semibold text-primary-dark">{lessonTitle ? `Fale com o Delcio: ${lessonTitle}` : "Fale com o Delcio"}</h2>
         {starter && turns.length === 0 && (
           <button
             onClick={() => send(starter)}
