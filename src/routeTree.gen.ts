@@ -19,12 +19,16 @@ import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedHistoricoRouteImport } from './routes/_authenticated/historico'
 import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
 import { Route as AuthenticatedProgressoRouteImport } from './routes/_authenticated/progresso'
+import { Route as AuthenticatedPronunciaRouteImport } from './routes/_authenticated/pronuncia'
 import { Route as AuthenticatedTesteRouteImport } from './routes/_authenticated/teste'
+import { Route as AuthenticatedVocabularioRouteImport } from './routes/_authenticated/vocabulario'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as ApiSttRouteImport } from './routes/api/stt'
 import { Route as ApiTtsRouteImport } from './routes/api/tts'
 import { Route as AuthenticatedAulasIndexRouteImport } from './routes/_authenticated/aulas.index'
 import { Route as AuthenticatedAulasIdRouteImport } from './routes/_authenticated/aulas.$id'
+import { Route as AuthenticatedRoleplayIndexRouteImport } from './routes/_authenticated/roleplay.index'
+import { Route as AuthenticatedRoleplayIdRouteImport } from './routes/_authenticated/roleplay.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -75,11 +79,22 @@ const AuthenticatedProgressoRoute = AuthenticatedProgressoRouteImport.update({
   path: '/progresso',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedPronunciaRoute = AuthenticatedPronunciaRouteImport.update({
+  id: '/pronuncia',
+  path: '/pronuncia',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedTesteRoute = AuthenticatedTesteRouteImport.update({
   id: '/teste',
   path: '/teste',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedVocabularioRoute =
+  AuthenticatedVocabularioRouteImport.update({
+    id: '/vocabulario',
+    path: '/vocabulario',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const ApiChatRoute = ApiChatRouteImport.update({
   id: '/api/chat',
   path: '/api/chat',
@@ -105,6 +120,17 @@ const AuthenticatedAulasIdRoute = AuthenticatedAulasIdRouteImport.update({
   path: '/aulas/$id',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedRoleplayIndexRoute =
+  AuthenticatedRoleplayIndexRouteImport.update({
+    id: '/roleplay/',
+    path: '/roleplay/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedRoleplayIdRoute = AuthenticatedRoleplayIdRouteImport.update({
+  id: '/roleplay/$id',
+  path: '/roleplay/$id',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -116,12 +142,16 @@ export interface FileRoutesByFullPath {
   '/historico': typeof AuthenticatedHistoricoRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/progresso': typeof AuthenticatedProgressoRoute
+  '/pronuncia': typeof AuthenticatedPronunciaRoute
   '/teste': typeof AuthenticatedTesteRoute
+  '/vocabulario': typeof AuthenticatedVocabularioRoute
   '/api/chat': typeof ApiChatRoute
   '/api/stt': typeof ApiSttRoute
   '/api/tts': typeof ApiTtsRoute
   '/aulas/$id': typeof AuthenticatedAulasIdRoute
+  '/roleplay/$id': typeof AuthenticatedRoleplayIdRoute
   '/aulas/': typeof AuthenticatedAulasIndexRoute
+  '/roleplay/': typeof AuthenticatedRoleplayIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -133,12 +163,16 @@ export interface FileRoutesByTo {
   '/historico': typeof AuthenticatedHistoricoRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/progresso': typeof AuthenticatedProgressoRoute
+  '/pronuncia': typeof AuthenticatedPronunciaRoute
   '/teste': typeof AuthenticatedTesteRoute
+  '/vocabulario': typeof AuthenticatedVocabularioRoute
   '/api/chat': typeof ApiChatRoute
   '/api/stt': typeof ApiSttRoute
   '/api/tts': typeof ApiTtsRoute
   '/aulas/$id': typeof AuthenticatedAulasIdRoute
+  '/roleplay/$id': typeof AuthenticatedRoleplayIdRoute
   '/aulas': typeof AuthenticatedAulasIndexRoute
+  '/roleplay': typeof AuthenticatedRoleplayIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -152,12 +186,16 @@ export interface FileRoutesById {
   '/_authenticated/historico': typeof AuthenticatedHistoricoRoute
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
   '/_authenticated/progresso': typeof AuthenticatedProgressoRoute
+  '/_authenticated/pronuncia': typeof AuthenticatedPronunciaRoute
   '/_authenticated/teste': typeof AuthenticatedTesteRoute
+  '/_authenticated/vocabulario': typeof AuthenticatedVocabularioRoute
   '/api/chat': typeof ApiChatRoute
   '/api/stt': typeof ApiSttRoute
   '/api/tts': typeof ApiTtsRoute
   '/_authenticated/aulas/$id': typeof AuthenticatedAulasIdRoute
+  '/_authenticated/roleplay/$id': typeof AuthenticatedRoleplayIdRoute
   '/_authenticated/aulas/': typeof AuthenticatedAulasIndexRoute
+  '/_authenticated/roleplay/': typeof AuthenticatedRoleplayIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -171,12 +209,16 @@ export interface FileRouteTypes {
     | '/historico'
     | '/onboarding'
     | '/progresso'
+    | '/pronuncia'
     | '/teste'
+    | '/vocabulario'
     | '/api/chat'
     | '/api/stt'
     | '/api/tts'
     | '/aulas/$id'
+    | '/roleplay/$id'
     | '/aulas/'
+    | '/roleplay/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -188,12 +230,16 @@ export interface FileRouteTypes {
     | '/historico'
     | '/onboarding'
     | '/progresso'
+    | '/pronuncia'
     | '/teste'
+    | '/vocabulario'
     | '/api/chat'
     | '/api/stt'
     | '/api/tts'
     | '/aulas/$id'
+    | '/roleplay/$id'
     | '/aulas'
+    | '/roleplay'
   id:
     | '__root__'
     | '/'
@@ -206,12 +252,16 @@ export interface FileRouteTypes {
     | '/_authenticated/historico'
     | '/_authenticated/onboarding'
     | '/_authenticated/progresso'
+    | '/_authenticated/pronuncia'
     | '/_authenticated/teste'
+    | '/_authenticated/vocabulario'
     | '/api/chat'
     | '/api/stt'
     | '/api/tts'
     | '/_authenticated/aulas/$id'
+    | '/_authenticated/roleplay/$id'
     | '/_authenticated/aulas/'
+    | '/_authenticated/roleplay/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -298,11 +348,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProgressoRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/pronuncia': {
+      id: '/_authenticated/pronuncia'
+      path: '/pronuncia'
+      fullPath: '/pronuncia'
+      preLoaderRoute: typeof AuthenticatedPronunciaRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/teste': {
       id: '/_authenticated/teste'
       path: '/teste'
       fullPath: '/teste'
       preLoaderRoute: typeof AuthenticatedTesteRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/vocabulario': {
+      id: '/_authenticated/vocabulario'
+      path: '/vocabulario'
+      fullPath: '/vocabulario'
+      preLoaderRoute: typeof AuthenticatedVocabularioRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/api/chat': {
@@ -340,6 +404,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAulasIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/roleplay/': {
+      id: '/_authenticated/roleplay/'
+      path: '/roleplay'
+      fullPath: '/roleplay/'
+      preLoaderRoute: typeof AuthenticatedRoleplayIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/roleplay/$id': {
+      id: '/_authenticated/roleplay/$id'
+      path: '/roleplay/$id'
+      fullPath: '/roleplay/$id'
+      preLoaderRoute: typeof AuthenticatedRoleplayIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
@@ -348,9 +426,13 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedHistoricoRoute: typeof AuthenticatedHistoricoRoute
   AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
   AuthenticatedProgressoRoute: typeof AuthenticatedProgressoRoute
+  AuthenticatedPronunciaRoute: typeof AuthenticatedPronunciaRoute
   AuthenticatedTesteRoute: typeof AuthenticatedTesteRoute
+  AuthenticatedVocabularioRoute: typeof AuthenticatedVocabularioRoute
   AuthenticatedAulasIdRoute: typeof AuthenticatedAulasIdRoute
+  AuthenticatedRoleplayIdRoute: typeof AuthenticatedRoleplayIdRoute
   AuthenticatedAulasIndexRoute: typeof AuthenticatedAulasIndexRoute
+  AuthenticatedRoleplayIndexRoute: typeof AuthenticatedRoleplayIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -358,9 +440,13 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedHistoricoRoute: AuthenticatedHistoricoRoute,
   AuthenticatedOnboardingRoute: AuthenticatedOnboardingRoute,
   AuthenticatedProgressoRoute: AuthenticatedProgressoRoute,
+  AuthenticatedPronunciaRoute: AuthenticatedPronunciaRoute,
   AuthenticatedTesteRoute: AuthenticatedTesteRoute,
+  AuthenticatedVocabularioRoute: AuthenticatedVocabularioRoute,
   AuthenticatedAulasIdRoute: AuthenticatedAulasIdRoute,
+  AuthenticatedRoleplayIdRoute: AuthenticatedRoleplayIdRoute,
   AuthenticatedAulasIndexRoute: AuthenticatedAulasIndexRoute,
+  AuthenticatedRoleplayIndexRoute: AuthenticatedRoleplayIndexRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
