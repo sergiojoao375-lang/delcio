@@ -539,10 +539,11 @@ Reply ONLY with JSON: {"score":0-100,"reading":0-100,"grammar":0-100,"conversati
 
     const { data: updated } = await supabase
       .from("learner_profiles")
-      .update(update)
+      .update(update as any)
       .eq("user_id", userId)
       .select("*")
       .single();
+    if (!updated) throw new Error("Não foi possível atualizar o seu nível.");
 
     const levelXp = await xpInCurrentLevel(supabase, userId, updated.level_started_at);
 
