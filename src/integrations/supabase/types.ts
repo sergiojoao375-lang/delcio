@@ -52,6 +52,42 @@ export type Database = {
           },
         ]
       }
+      course_certificates: {
+        Row: {
+          course_title: string
+          created_at: string
+          final_score: number
+          full_name: string
+          id: string
+          issued_at: string
+          level: string
+          user_id: string
+          verification_code: string
+        }
+        Insert: {
+          course_title?: string
+          created_at?: string
+          final_score: number
+          full_name: string
+          id?: string
+          issued_at?: string
+          level?: string
+          user_id: string
+          verification_code?: string
+        }
+        Update: {
+          course_title?: string
+          created_at?: string
+          final_score?: number
+          full_name?: string
+          id?: string
+          issued_at?: string
+          level?: string
+          user_id?: string
+          verification_code?: string
+        }
+        Relationships: []
+      }
       daily_activity: {
         Row: {
           created_at: string
@@ -368,6 +404,37 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      issue_course_certificate: {
+        Args: { _full_name: string }
+        Returns: {
+          course_title: string
+          created_at: string
+          final_score: number
+          full_name: string
+          id: string
+          issued_at: string
+          level: string
+          user_id: string
+          verification_code: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "course_certificates"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      verify_course_certificate: {
+        Args: { _verification_code: string }
+        Returns: {
+          course_title: string
+          final_score: number
+          full_name: string
+          issued_at: string
+          level: string
+          verification_code: string
+        }[]
       }
     }
     Enums: {

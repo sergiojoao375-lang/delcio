@@ -22,6 +22,27 @@
       "when": 1790866548254,
       "tag": "0002_vocab_items",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1790936338370,
+      "tag": "0003_course_certificates",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1790936358879,
+      "tag": "0004_public_certificate_verification",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1790936376167,
+      "tag": "0005_secure_certificate_issuance",
+      "breakpoints": true
     }
   ]
 }
