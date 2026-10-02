@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as CertificadoExemploRouteImport } from './routes/certificado-exemplo'
 import { Route as DebugRouteImport } from './routes/debug'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
@@ -25,6 +26,7 @@ import { Route as AuthenticatedVocabularioRouteImport } from './routes/_authenti
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as ApiSttRouteImport } from './routes/api/stt'
 import { Route as ApiTtsRouteImport } from './routes/api/tts'
+import { Route as VerificarCodigoRouteImport } from './routes/verificar.$codigo'
 import { Route as AuthenticatedAulasIndexRouteImport } from './routes/_authenticated/aulas.index'
 import { Route as AuthenticatedAulasIdRouteImport } from './routes/_authenticated/aulas.$id'
 import { Route as AuthenticatedRoleplayIndexRouteImport } from './routes/_authenticated/roleplay.index'
@@ -47,6 +49,11 @@ const AboutRoute = AboutRouteImport.update({
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CertificadoExemploRoute = CertificadoExemploRouteImport.update({
+  id: '/certificado-exemplo',
+  path: '/certificado-exemplo',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DebugRoute = DebugRouteImport.update({
@@ -110,6 +117,11 @@ const ApiTtsRoute = ApiTtsRouteImport.update({
   path: '/api/tts',
   getParentRoute: () => rootRouteImport,
 } as any)
+const VerificarCodigoRoute = VerificarCodigoRouteImport.update({
+  id: '/verificar/$codigo',
+  path: '/verificar/$codigo',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedAulasIndexRoute = AuthenticatedAulasIndexRouteImport.update({
   id: '/aulas/',
   path: '/aulas/',
@@ -136,6 +148,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
+  '/certificado-exemplo': typeof CertificadoExemploRoute
   '/debug': typeof DebugRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin': typeof AuthenticatedAdminRoute
@@ -148,6 +161,7 @@ export interface FileRoutesByFullPath {
   '/api/chat': typeof ApiChatRoute
   '/api/stt': typeof ApiSttRoute
   '/api/tts': typeof ApiTtsRoute
+  '/verificar/$codigo': typeof VerificarCodigoRoute
   '/aulas/$id': typeof AuthenticatedAulasIdRoute
   '/roleplay/$id': typeof AuthenticatedRoleplayIdRoute
   '/aulas/': typeof AuthenticatedAulasIndexRoute
@@ -157,6 +171,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
+  '/certificado-exemplo': typeof CertificadoExemploRoute
   '/debug': typeof DebugRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin': typeof AuthenticatedAdminRoute
@@ -169,6 +184,7 @@ export interface FileRoutesByTo {
   '/api/chat': typeof ApiChatRoute
   '/api/stt': typeof ApiSttRoute
   '/api/tts': typeof ApiTtsRoute
+  '/verificar/$codigo': typeof VerificarCodigoRoute
   '/aulas/$id': typeof AuthenticatedAulasIdRoute
   '/roleplay/$id': typeof AuthenticatedRoleplayIdRoute
   '/aulas': typeof AuthenticatedAulasIndexRoute
@@ -180,6 +196,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
+  '/certificado-exemplo': typeof CertificadoExemploRoute
   '/debug': typeof DebugRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
@@ -192,6 +209,7 @@ export interface FileRoutesById {
   '/api/chat': typeof ApiChatRoute
   '/api/stt': typeof ApiSttRoute
   '/api/tts': typeof ApiTtsRoute
+  '/verificar/$codigo': typeof VerificarCodigoRoute
   '/_authenticated/aulas/$id': typeof AuthenticatedAulasIdRoute
   '/_authenticated/roleplay/$id': typeof AuthenticatedRoleplayIdRoute
   '/_authenticated/aulas/': typeof AuthenticatedAulasIndexRoute
@@ -203,6 +221,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/auth'
+    | '/certificado-exemplo'
     | '/debug'
     | '/sitemap.xml'
     | '/admin'
@@ -215,6 +234,7 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/api/stt'
     | '/api/tts'
+    | '/verificar/$codigo'
     | '/aulas/$id'
     | '/roleplay/$id'
     | '/aulas/'
@@ -224,6 +244,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/auth'
+    | '/certificado-exemplo'
     | '/debug'
     | '/sitemap.xml'
     | '/admin'
@@ -236,6 +257,7 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/api/stt'
     | '/api/tts'
+    | '/verificar/$codigo'
     | '/aulas/$id'
     | '/roleplay/$id'
     | '/aulas'
@@ -246,6 +268,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/about'
     | '/auth'
+    | '/certificado-exemplo'
     | '/debug'
     | '/sitemap.xml'
     | '/_authenticated/admin'
@@ -258,6 +281,7 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/api/stt'
     | '/api/tts'
+    | '/verificar/$codigo'
     | '/_authenticated/aulas/$id'
     | '/_authenticated/roleplay/$id'
     | '/_authenticated/aulas/'
@@ -269,11 +293,13 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
   AuthRoute: typeof AuthRoute
+  CertificadoExemploRoute: typeof CertificadoExemploRoute
   DebugRoute: typeof DebugRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   ApiChatRoute: typeof ApiChatRoute
   ApiSttRoute: typeof ApiSttRoute
   ApiTtsRoute: typeof ApiTtsRoute
+  VerificarCodigoRoute: typeof VerificarCodigoRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -304,6 +330,13 @@ declare module '@tanstack/react-router' {
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/certificado-exemplo': {
+      id: '/certificado-exemplo'
+      path: '/certificado-exemplo'
+      fullPath: '/certificado-exemplo'
+      preLoaderRoute: typeof CertificadoExemploRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/debug': {
@@ -390,6 +423,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiTtsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/verificar/$codigo': {
+      id: '/verificar/$codigo'
+      path: '/verificar/$codigo'
+      fullPath: '/verificar/$codigo'
+      preLoaderRoute: typeof VerificarCodigoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/aulas/': {
       id: '/_authenticated/aulas/'
       path: '/aulas'
@@ -457,11 +497,13 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AboutRoute: AboutRoute,
   AuthRoute: AuthRoute,
+  CertificadoExemploRoute: CertificadoExemploRoute,
   DebugRoute: DebugRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   ApiChatRoute: ApiChatRoute,
   ApiSttRoute: ApiSttRoute,
   ApiTtsRoute: ApiTtsRoute,
+  VerificarCodigoRoute: VerificarCodigoRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
