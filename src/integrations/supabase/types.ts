@@ -405,6 +405,26 @@ export type Database = {
         }
         Returns: boolean
       }
+      issue_course_certificate: {
+        Args: { _full_name: string }
+        Returns: {
+          course_title: string
+          created_at: string
+          final_score: number
+          full_name: string
+          id: string
+          issued_at: string
+          level: string
+          user_id: string
+          verification_code: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "course_certificates"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       verify_course_certificate: {
         Args: { _verification_code: string }
         Returns: {
