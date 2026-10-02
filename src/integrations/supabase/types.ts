@@ -405,6 +405,17 @@ export type Database = {
         }
         Returns: boolean
       }
+      verify_course_certificate: {
+        Args: { _verification_code: string }
+        Returns: {
+          course_title: string
+          final_score: number
+          full_name: string
+          issued_at: string
+          level: string
+          verification_code: string
+        }[]
+      }
     }
     Enums: {
       app_role: "admin" | "user"
