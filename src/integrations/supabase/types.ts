@@ -52,6 +52,42 @@ export type Database = {
           },
         ]
       }
+      course_certificates: {
+        Row: {
+          course_title: string
+          created_at: string
+          final_score: number
+          full_name: string
+          id: string
+          issued_at: string
+          level: string
+          user_id: string
+          verification_code: string
+        }
+        Insert: {
+          course_title?: string
+          created_at?: string
+          final_score: number
+          full_name: string
+          id?: string
+          issued_at?: string
+          level?: string
+          user_id: string
+          verification_code?: string
+        }
+        Update: {
+          course_title?: string
+          created_at?: string
+          final_score?: number
+          full_name?: string
+          id?: string
+          issued_at?: string
+          level?: string
+          user_id?: string
+          verification_code?: string
+        }
+        Relationships: []
+      }
       daily_activity: {
         Row: {
           created_at: string
