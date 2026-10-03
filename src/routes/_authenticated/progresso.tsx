@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
-import { Flame, Shield, Star, Target, Trophy, Loader2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Award, Flame, Printer, Shield, Star, Target, Trophy, Loader2 } from "lucide-react";
 import { buyShield, getLearner, listTestHistory, updateDailyGoal } from "@/lib/learning.functions";
 import {
   DAILY_GOALS,
@@ -13,9 +13,14 @@ import {
   estimatedMonths,
   type Level,
 } from "@/lib/levels";
+import { getCertificateStatus, getMyCertificate, issueMyCertificate } from "@/lib/certificate.functions";
+import { CourseCertificate, type CertificateDetails } from "@/components/course-certificate";
+import { Button } from "@/components/ui/button";
 
 const learnerQuery = queryOptions({ queryKey: ["learner"], queryFn: () => getLearner() });
 const historyQuery = queryOptions({ queryKey: ["testHistory"], queryFn: () => listTestHistory() });
+const certificateQuery = queryOptions({ queryKey: ["certificate"], queryFn: () => getMyCertificate() });
+const certificateStatusQuery = queryOptions({ queryKey: ["certificateStatus"], queryFn: () => getCertificateStatus() });
 
 export const Route = createFileRoute("/_authenticated/progresso")({
   head: () => ({
@@ -38,6 +43,8 @@ export const Route = createFileRoute("/_authenticated/progresso")({
   loader: async ({ context }) => {
     await context.queryClient.ensureQueryData(learnerQuery);
     await context.queryClient.ensureQueryData(historyQuery);
+    await context.queryClient.ensureQueryData(certificateQuery);
+    await context.queryClient.ensureQueryData(certificateStatusQuery);
   },
   component: ProgressPage,
   errorComponent: () => (
@@ -58,10 +65,33 @@ function Bar({ value, max }: { value: number; max: number }) {
 function ProgressPage() {
   const { data: learner } = useSuspenseQuery(learnerQuery);
   const { data: history } = useSuspenseQuery(historyQuery);
+  const { data: certificate } = useSuspenseQuery(certificateQuery);
+  const { data: certificateStatus } = useSuspenseQuery(certificateStatusQuery);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
+  const [certificateName, setCertificateName] = useState(certificateStatus.suggestedName);
+
+  useEffect(() => {
+    if (!certificateName && certificateStatus.suggestedName) setCertificateName(certificateStatus.suggestedName);
+  }, [certificateName, certificateStatus.suggestedName]);
+
+  async function issueCertificate() {
+    setBusy(true);
+    setNotice(null);
+    try {
+      await issueMyCertificate({ data: { fullName: certificateName } });
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["certificate"] }),
+        queryClient.invalidateQueries({ queryKey: ["certificateStatus"] }),
+      ]);
+    } catch (e) {
+      setNotice(e instanceof Error ? e.message : "Não foi possível emitir o certificado.");
+    } finally {
+      setBusy(false);
+    }
+  }
 
   async function shield() {
     setBusy(true);
@@ -223,10 +253,36 @@ function ProgressPage() {
               )}
             </>
           ) : (
-            <p className="mt-1 text-sm text-muted-foreground">
-              Você chegou ao nível mais alto do curso. Continue praticando para não perder o ritmo!
-            </p>
+            <><p className="mt-1 text-sm text-muted-foreground">Você chegou ao nível mais alto. Agora faça o exame final para concluir o curso.</p>
+            {!certificateStatus.finalPassed && <Button className="mt-4" onClick={() => navigate({ to: "/teste", search: { kind: "final" } })}>Fazer exame final</Button>}</>
           )}
+        </section>
+
+        <section className="rounded-2xl border border-border bg-card p-5">
+          <h2 className="flex items-center gap-2 font-semibold text-primary-dark"><Award className="h-5 w-5 text-primary" /> Certificado final</h2>
+          {certificate ? (
+            <div className="mt-4">
+              <CourseCertificate details={{
+                fullName: certificate.fullName,
+                courseTitle: certificate.courseTitle,
+                level: certificate.level,
+                finalScore: certificate.finalScore,
+                issuedAt: certificate.issuedAt,
+                verificationCode: certificate.verificationCode,
+                verificationUrl: `${window.location.origin}/verificar/${certificate.verificationCode}`,
+              }} />
+              <Button className="mt-4" onClick={() => window.print()}><Printer /> Imprimir ou guardar em PDF</Button>
+            </div>
+          ) : certificateStatus.finalPassed ? (
+            <div className="mt-3 max-w-md">
+              <label htmlFor="certificate-name" className="text-sm font-medium">Confirme o nome que aparecerá no certificado</label>
+              <input id="certificate-name" value={certificateName} onChange={(e) => setCertificateName(e.target.value)} maxLength={100} className="mt-2 w-full rounded-xl border border-input bg-background px-3 py-2" />
+              <Button className="mt-3" disabled={busy || certificateName.trim().length < 2} onClick={() => void issueCertificate()}>{busy && <Loader2 className="animate-spin" />} Emitir certificado</Button>
+            </div>
+          ) : (
+            <p className="mt-2 text-sm text-muted-foreground">Será liberado quando você concluir o nível Avançado e for aprovado no exame final.</p>
+          )}
+          <Link to="/certificado-exemplo" className="mt-3 inline-block text-sm font-medium text-primary hover:underline">Ver um exemplar do certificado</Link>
         </section>
 
         {history.length > 0 && (
@@ -237,7 +293,7 @@ function ProgressPage() {
                 <li key={t.id} className="rounded-xl bg-secondary p-3">
                   <div className="flex items-center justify-between">
                     <span className="font-medium">
-                      {t.kind === "placement" ? "Nivelamento" : `Passagem para ${t.to_level}`}
+                      {t.kind === "placement" ? "Nivelamento" : t.kind === "final" ? "Exame final" : `Passagem para ${t.to_level}`}
                     </span>
                     <span>{t.score}/100</span>
                   </div>

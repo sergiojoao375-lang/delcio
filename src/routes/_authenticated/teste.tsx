@@ -5,7 +5,7 @@ import { BookOpen, Loader2, MessageCircle, SpellCheck } from "lucide-react";
 import { startTest, submitTest } from "@/lib/learning.functions";
 import { LEVEL_LABEL, PASS_SCORE, type Level } from "@/lib/levels";
 
-type Kind = "placement" | "levelup";
+type Kind = "placement" | "levelup" | "final";
 
 type Question = {
   id: string;
@@ -27,7 +27,7 @@ type Result = {
 
 export const Route = createFileRoute("/_authenticated/teste")({
   validateSearch: (search: Record<string, unknown>): { kind: Kind } => ({
-    kind: search.kind === "placement" ? "placement" : "levelup",
+    kind: search.kind === "placement" ? "placement" : search.kind === "final" ? "final" : "levelup",
   }),
   head: () => ({
     meta: [
@@ -123,7 +123,7 @@ function TestPage() {
       <div className="mx-auto max-w-3xl space-y-6">
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold text-primary-dark">
-            {kind === "placement" ? "Teste de nivelamento" : "Teste de passagem de nível"}
+            {kind === "placement" ? "Teste de nivelamento" : kind === "final" ? "Exame final" : "Teste de passagem de nível"}
           </h1>
           <Link to="/progresso" className="text-sm text-primary hover:underline">
             Meu progresso
@@ -134,10 +134,10 @@ function TestPage() {
           <section className="rounded-2xl border border-border bg-card p-5">
             <p className="text-muted-foreground">
               São 6 questões práticas: leitura, gramática e conversação.{" "}
-              {kind === "levelup"
+              {kind !== "placement"
                 ? "As questões saem do seu histórico de conversas e das aulas que você já estudou."
                 : "As questões são calibradas para o nível que você indicou."}{" "}
-              {kind === "levelup" && `Você precisa de pelo menos ${PASS_SCORE} pontos de 100 para passar.`}
+              {kind !== "placement" && `Você precisa de pelo menos ${PASS_SCORE} pontos de 100 para passar.`}
             </p>
             <button
               onClick={() => void begin()}
@@ -195,7 +195,7 @@ function TestPage() {
               {result.kind === "placement"
                 ? `Seu nível é ${LEVEL_LABEL[result.recommendedLevel]}`
                 : result.passed
-                  ? "Aprovado! Você subiu de nível 🎉"
+                  ? result.kind === "final" ? "Curso concluído! O seu certificado está pronto 🎉" : "Aprovado! Você subiu de nível 🎉"
                   : "Ainda não foi desta vez"}
             </h2>
             <p className="mt-2 text-3xl font-bold">{result.score}/100</p>
@@ -205,10 +205,15 @@ function TestPage() {
               <li className="rounded-xl bg-secondary p-3">Conversação: {result.skills.conversation}</li>
             </ul>
             {result.feedback && <p className="mt-4 whitespace-pre-wrap">{result.feedback}</p>}
-            <div className="mt-5 flex gap-3">
+            <div className="mt-5 flex flex-wrap gap-3">
+              {result.kind === "final" && result.passed && (
+                <Link to="/progresso" className="rounded-xl bg-primary px-4 py-2 font-medium text-primary-foreground hover:opacity-90">
+                  Emitir certificado
+                </Link>
+              )}
               <Link
                 to="/aulas"
-                className="rounded-xl bg-primary px-4 py-2 font-medium text-primary-foreground hover:opacity-90"
+                className="rounded-xl border border-input px-4 py-2 font-medium hover:bg-accent"
               >
                 Ir para as aulas
               </Link>

@@ -209,3 +209,11 @@
   }
 
 .ai-particle { animation: ai-particle 2.4s ease-in-out infinite; }
+
+@media print {
+  @page { size: A4 landscape; margin: 8mm; }
+  body { background: var(--color-background); }
+  body * { visibility: hidden; }
+  .certificate, .certificate * { visibility: visible; }
+  .certificate { position: fixed; inset: 0; width: 100%; box-shadow: none; }
+}
