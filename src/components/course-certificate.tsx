@@ -22,7 +22,7 @@ export function CourseCertificate({ details }: { details: CertificateDetails }) 
   }).format(new Date(details.issuedAt));
 
   return (
-    <article className="certificate relative aspect-[1.414/1] w-full overflow-hidden border-[10px] border-primary bg-card p-5 text-center text-card-foreground shadow-xl sm:p-10">
+    <article className="certificate relative min-h-[650px] w-full overflow-hidden border-[10px] border-primary bg-card p-5 text-center text-card-foreground shadow-xl sm:aspect-[1.414/1] sm:min-h-0 sm:p-10">
       <div className="absolute inset-2 border border-primary/40" aria-hidden="true" />
       <div className="relative flex h-full flex-col items-center justify-between">
         <div>
@@ -30,7 +30,7 @@ export function CourseCertificate({ details }: { details: CertificateDetails }) 
             <Award className="h-8 w-8 sm:h-11 sm:w-11" />
           </div>
           <p className="mt-3 text-xs font-semibold uppercase text-primary sm:text-sm">Delcio-English</p>
-          <h1 className="mt-1 text-2xl font-bold text-primary-dark sm:text-5xl">Certificado de Conclusão</h1>
+          <h1 className="mt-1 text-2xl font-bold text-primary-dark sm:text-4xl">Certificado de Conclusão</h1>
           {details.sample && (
             <span className="mt-2 inline-flex rounded-full bg-secondary px-3 py-1 text-xs font-semibold text-muted-foreground">
               EXEMPLAR

@@ -27,6 +27,22 @@ export const getMyCertificate = createServerFn({ method: "GET" })
     return data ? mapCertificate(data) : null;
   });
 
+export const getCertificateStatus = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const [{ data: profile }, { data: finalTest }, { data: identity }] = await Promise.all([
+      context.supabase.from("learner_profiles").select("level").eq("user_id", context.userId).maybeSingle(),
+      context.supabase.from("level_tests").select("score").eq("user_id", context.userId).eq("kind", "final").eq("status", "done").eq("passed", true).order("created_at", { ascending: false }).limit(1).maybeSingle(),
+      context.supabase.from("profiles").select("display_name").eq("id", context.userId).maybeSingle(),
+    ]);
+    return {
+      eligibleForFinal: profile?.level === "advanced",
+      finalPassed: !!finalTest,
+      finalScore: finalTest?.score ?? null,
+      suggestedName: identity?.display_name ?? "",
+    };
+  });
+
 export const issueMyCertificate = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: { fullName: string }) => d)

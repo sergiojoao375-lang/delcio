@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Mic, Send, Languages, RefreshCcw, Flame, Trophy, Sparkles, PartyPopper, Star, Crown, Play, Volume2 } from "lucide-react";
+import { Mic, Send, Languages, RefreshCcw, Flame, Trophy, Sparkles, PartyPopper, Star, Crown, Play, Volume2, Menu, BookOpen, MessagesSquare, SpellCheck, TrendingUp, History, Settings, Info, LogIn, LogOut } from "lucide-react";
 import { VOICES, DEFAULT_VOICE_ID, getVoice } from "@/lib/voices";
 import { SpeakingAvatar } from "@/components/speaking-avatar";
 import { fetchWithRetry } from "@/lib/api-client";
@@ -12,6 +12,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import { addMessage, createConversation, getMyAccess } from "@/lib/db.functions";
 import { getLearner } from "@/lib/learning.functions";
 import { usePractice } from "@/hooks/use-practice";
+import { Sheet, SheetClose, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Button } from "@/components/ui/button";
 
 
 
@@ -30,6 +32,8 @@ export const Route = createFileRoute("/")({
         content:
           "Pratique inglês ou português com Delcio, o professor de IA. Conversação, correções gentis, áudio e tradução instantânea.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: Index,
@@ -883,6 +887,7 @@ function Index() {
             <span className="shrink-0 bg-white/10 rounded-full px-2 sm:px-3 py-1 flex items-center gap-1">
               <Flame className="w-3.5 h-3.5" /> {streak}
             </span>
+            <div className="hidden xl:flex items-center gap-1 sm:gap-2">
             <Link
               to="/aulas"
               className="shrink-0 bg-white/10 hover:bg-white/20 transition rounded-full px-2 sm:px-3 py-1 text-[11px] sm:text-[12px] font-medium"
@@ -948,6 +953,52 @@ function Index() {
             >
               Sobre
             </Link>
+            </div>
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className="xl:hidden text-primary-foreground hover:bg-white/10 hover:text-primary-foreground" aria-label="Abrir menu">
+                  <Menu className="h-5 w-5" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent className="w-[88vw] max-w-sm overflow-y-auto p-0">
+                <SheetHeader className="border-b border-border px-5 py-5 text-left">
+                  <SheetTitle className="text-primary-dark">Delcio-English</SheetTitle>
+                  <SheetDescription>Escolha onde quer continuar.</SheetDescription>
+                </SheetHeader>
+                <nav className="grid gap-1 p-3" aria-label="Menu principal">
+                  {[
+                    { to: "/aulas" as const, label: "Aulas", icon: BookOpen, show: true },
+                    { to: "/roleplay" as const, label: "Cenários", icon: MessagesSquare, show: signedIn },
+                    { to: "/vocabulario" as const, label: "Palavras", icon: Star, show: signedIn },
+                    { to: "/pronuncia" as const, label: "Pronúncia", icon: SpellCheck, show: signedIn },
+                    { to: "/progresso" as const, label: "Progresso", icon: TrendingUp, show: signedIn },
+                    { to: "/historico" as const, label: "Histórico", icon: History, show: signedIn },
+                    { to: "/admin" as const, label: "Painel", icon: Settings, show: isAdmin },
+                    { to: "/about" as const, label: "Sobre", icon: Info, show: true },
+                  ].filter((item) => item.show).map((item) => (
+                    <SheetClose asChild key={item.to}>
+                      <Link to={item.to} className="flex min-h-12 items-center gap-3 rounded-lg px-3 py-2 font-medium text-foreground hover:bg-accent">
+                        <item.icon className="h-5 w-5 text-primary" /> {item.label}
+                      </Link>
+                    </SheetClose>
+                  ))}
+                  <div className="my-2 border-t border-border" />
+                  {signedIn ? (
+                    <SheetClose asChild>
+                      <Button variant="ghost" className="min-h-12 justify-start gap-3 px-3" onClick={handleSignOut}>
+                        <LogOut className="h-5 w-5 text-primary" /> Sair
+                      </Button>
+                    </SheetClose>
+                  ) : (
+                    <SheetClose asChild>
+                      <Link to="/auth" className="flex min-h-12 items-center gap-3 rounded-lg px-3 py-2 font-semibold text-primary hover:bg-accent">
+                        <LogIn className="h-5 w-5" /> Entrar
+                      </Link>
+                    </SheetClose>
+                  )}
+                </nav>
+              </SheetContent>
+            </Sheet>
           </div>
 
         </div>

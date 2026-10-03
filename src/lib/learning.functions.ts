@@ -412,7 +412,7 @@ function coerceQuestions(raw: any): TestQuestion[] {
 
 export const startTest = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { kind: "placement" | "levelup" }) => d)
+  .inputValidator((d: { kind: "placement" | "levelup" | "final" }) => d)
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
     const profile = await loadOrCreateProfile(supabase, userId);
@@ -425,12 +425,24 @@ export const startTest = createServerFn({ method: "POST" })
       if (!status.testUnlocked) return { started: false as const, reason: "locked" as const, status };
       target = status.nextLevel;
       if (!target) return { started: false as const, reason: "max_level" as const, status };
+    } else if (data.kind === "final") {
+      if (level !== "advanced") return { started: false as const, reason: "locked" as const, status };
+      const { data: passedFinal } = await supabase
+        .from("level_tests")
+        .select("id")
+        .eq("user_id", userId)
+        .eq("kind", "final")
+        .eq("status", "done")
+        .eq("passed", true)
+        .limit(1)
+        .maybeSingle();
+      if (passedFinal) return { started: false as const, reason: "already_passed" as const, status };
     }
 
-    const ctx = data.kind === "levelup" ? await studentContext(supabase, userId) : null;
+    const ctx = data.kind === "placement" ? null : await studentContext(supabase, userId);
 
     const raw = await askAI(
-      `You are an English placement examiner for Brazilian-Portuguese speakers.
+      `You are an English ${data.kind === "final" ? "course completion" : "placement"} examiner for Brazilian-Portuguese speakers.
 Build a short practical test with EXACTLY 6 questions: 2 reading (each with a short "passage" and a comprehension question), 2 grammar (fill-in / fix the sentence), 2 conversation (an open prompt the student answers in 1-3 English sentences).
 All prompts in English, instructions may include a short Portuguese hint. Calibrate difficulty to the target level.
 Reply ONLY with JSON: {"questions":[{"skill":"reading"|"grammar"|"conversation","passage":"optional","prompt":"...","expected":"expected answer or key points"}]}`,
@@ -509,7 +521,7 @@ Reply ONLY with JSON: {"score":0-100,"reading":0-100,"grammar":0-100,"conversati
     const score = Math.max(0, Math.min(100, Math.round(Number(result?.score) || 0)));
     const feedback = typeof result?.feedback === "string" ? result.feedback : "";
     const recommended = asLevel(result?.recommendedLevel);
-    const passed = test.kind === "levelup" ? score >= PASS_SCORE : true;
+    const passed = test.kind === "placement" ? true : score >= PASS_SCORE;
 
     await supabase
       .from("level_tests")
@@ -532,7 +544,7 @@ Reply ONLY with JSON: {"score":0-100,"reading":0-100,"grammar":0-100,"conversati
       update["level"] = recommended;
       update["placement_done"] = true;
       update["level_started_at"] = new Date().toISOString();
-    } else if (passed && test.to_level) {
+    } else if (test.kind === "levelup" && passed && test.to_level) {
       update["level"] = asLevel(test.to_level);
       update["level_started_at"] = new Date().toISOString();
     }
@@ -557,7 +569,7 @@ Reply ONLY with JSON: {"score":0-100,"reading":0-100,"grammar":0-100,"conversati
         grammar: Math.round(Number(result?.grammar) || 0),
         conversation: Math.round(Number(result?.conversation) || 0),
       },
-      kind: test.kind as "placement" | "levelup",
+      kind: test.kind as "placement" | "levelup" | "final",
       status: summarize(updated, levelXp),
     };
   });
