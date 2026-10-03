@@ -269,7 +269,7 @@ function ProgressPage() {
                 finalScore: certificate.finalScore,
                 issuedAt: certificate.issuedAt,
                 verificationCode: certificate.verificationCode,
-                verificationUrl: `${window.location.origin}/verificar/${certificate.verificationCode}`,
+                verificationUrl: `https://delcio.lovable.app/verificar/${certificate.verificationCode}`,
               }} />
               <Button className="mt-4" onClick={() => window.print()}><Printer /> Imprimir ou guardar em PDF</Button>
             </div>
