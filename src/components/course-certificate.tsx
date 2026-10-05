@@ -22,7 +22,8 @@ export function CourseCertificate({ details }: { details: CertificateDetails }) 
   }).format(new Date(details.issuedAt));
 
   return (
-    <article className="certificate relative min-h-[720px] w-full overflow-hidden bg-certificate-paper p-3 text-center text-certificate-ink shadow-certificate sm:aspect-[1.414/1] sm:min-h-0 sm:p-4">
+    <div className="certificate-viewport w-full">
+    <article className="certificate relative aspect-[1.414/1] w-full min-w-[760px] overflow-hidden bg-certificate-paper p-4 text-center text-certificate-ink shadow-certificate">
       <div className="certificate-grain absolute inset-0" aria-hidden="true" />
       <div className="absolute inset-3 border-[5px] border-double border-certificate-copper sm:inset-4 sm:border-[8px]" aria-hidden="true" />
       <div className="absolute inset-5 border border-certificate-green/70 sm:inset-7" aria-hidden="true" />
@@ -36,23 +37,23 @@ export function CourseCertificate({ details }: { details: CertificateDetails }) 
         <ShieldCheck className="h-72 w-72 sm:h-96 sm:w-96" strokeWidth={0.7} />
       </div>
 
-      <div className="relative z-10 flex min-h-[696px] flex-col items-center px-7 py-9 sm:h-full sm:min-h-0 sm:px-16 sm:py-10">
+      <div className="relative z-10 flex h-full flex-col items-center px-16 py-10">
         <header className="flex flex-col items-center">
-          <div className="grid h-12 w-12 place-items-center rounded-full border border-certificate-copper bg-certificate-green text-certificate-paper shadow-sm sm:h-16 sm:w-16">
-            <Feather className="h-6 w-6 sm:h-8 sm:w-8" strokeWidth={1.4} />
+          <div className="grid h-16 w-16 place-items-center rounded-full border border-certificate-copper bg-certificate-green text-certificate-paper shadow-sm">
+            <Feather className="h-8 w-8" strokeWidth={1.8} />
           </div>
-          <p className="mt-2 font-certificate-body text-[9px] font-semibold uppercase text-certificate-green sm:text-xs">
+          <p className="mt-2 font-certificate-body text-xs font-bold uppercase text-certificate-green">
             Delcio-English · Academia de Línguas
           </p>
-          <h1 className="mt-1 font-certificate-heading text-3xl font-bold uppercase text-certificate-green sm:text-5xl">
+          <h1 className="mt-1 font-certificate-heading text-5xl font-bold uppercase text-certificate-green">
             Certificado
           </h1>
           <div className="mt-1 flex items-center gap-3 sm:gap-4">
-            <span className="h-px w-8 bg-certificate-copper sm:w-14" />
-            <p className="font-certificate-body text-[8px] font-semibold uppercase text-certificate-copper sm:text-[11px]">
+            <span className="h-px w-14 bg-certificate-copper" />
+            <p className="font-certificate-body text-[11px] font-bold uppercase text-certificate-copper">
               de conclusão e excelência
             </p>
-            <span className="h-px w-8 bg-certificate-copper sm:w-14" />
+            <span className="h-px w-14 bg-certificate-copper" />
           </div>
           {details.sample && (
             <span className="mt-2 border border-certificate-copper/60 bg-certificate-copper/10 px-3 py-1 font-certificate-body text-[9px] font-semibold uppercase text-certificate-copper">
@@ -62,15 +63,15 @@ export function CourseCertificate({ details }: { details: CertificateDetails }) 
         </header>
 
         <section className="my-auto py-4 sm:py-5">
-          <p className="font-certificate-heading text-xs italic text-certificate-muted sm:text-base">
+          <p className="font-certificate-heading text-base font-bold italic text-certificate-muted">
             Certificamos, para os devidos fins, que
           </p>
           <div className="mx-auto mt-2 max-w-3xl border-b border-certificate-copper/70 px-3 pb-2 sm:px-12">
-            <p className="font-certificate-heading text-2xl font-bold text-certificate-green sm:text-5xl">
+            <p className="font-certificate-heading text-5xl font-bold text-certificate-green">
               {details.fullName}
             </p>
           </div>
-          <p className="mx-auto mt-3 max-w-2xl font-certificate-body text-[10px] leading-relaxed text-certificate-muted sm:text-sm">
+          <p className="mx-auto mt-3 max-w-2xl font-certificate-body text-sm font-medium leading-relaxed text-certificate-muted">
             concluiu com mérito todos os módulos e requisitos do <strong className="font-semibold text-certificate-ink">{details.courseTitle}</strong>,
             demonstrando proficiência no nível <strong className="font-semibold text-certificate-ink">{level}</strong> e alcançando a classificação final de <strong className="font-semibold text-certificate-ink">{details.finalScore}/100</strong>.
           </p>
@@ -78,9 +79,9 @@ export function CourseCertificate({ details }: { details: CertificateDetails }) 
 
         <footer className="grid w-full grid-cols-[1fr_auto_1fr] items-end gap-3 sm:gap-8">
           <div className="min-w-0 text-center font-certificate-body">
-            <p className="font-certificate-heading text-sm italic text-certificate-green sm:text-lg">Delcio João</p>
+            <p className="font-certificate-heading text-lg font-bold italic text-certificate-green">Delcio João</p>
             <div className="mx-auto mt-1 h-px max-w-40 bg-certificate-green/60" />
-            <p className="mt-1 text-[7px] uppercase text-certificate-muted sm:text-[9px]">Direção académica</p>
+            <p className="mt-1 text-[9px] font-semibold uppercase text-certificate-muted">Direção académica</p>
           </div>
 
           <div className="relative flex flex-col items-center pb-1">
@@ -97,11 +98,11 @@ export function CourseCertificate({ details }: { details: CertificateDetails }) 
 
           <div className="flex min-w-0 items-end justify-center gap-2 text-left font-certificate-body sm:gap-3">
             <div className="min-w-0">
-              <div className="flex items-center gap-1 text-[8px] font-semibold text-certificate-green sm:text-[10px]">
+              <div className="flex items-center gap-1 text-[10px] font-bold text-certificate-green">
                 <CheckCircle2 className="h-3 w-3 shrink-0" /> Autenticidade verificável
               </div>
-              <p className="mt-1 text-[7px] text-certificate-muted sm:text-[9px]">Emitido em {date}</p>
-              <p className="mt-1 max-w-28 truncate font-mono text-[6px] text-certificate-muted sm:max-w-40 sm:text-[8px]">
+              <p className="mt-1 text-[9px] font-medium text-certificate-muted">Emitido em {date}</p>
+              <p className="mt-1 max-w-40 truncate font-mono text-[8px] font-medium text-certificate-muted">
                 {details.verificationCode}
               </p>
             </div>
@@ -112,5 +113,6 @@ export function CourseCertificate({ details }: { details: CertificateDetails }) 
         </footer>
       </div>
     </article>
+    </div>
   );
 }
