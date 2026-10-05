@@ -5,3 +5,4 @@
 - [x] Criar certificado imprimível com QR e página pública de verificação
 - [x] Disponibilizar um exemplar do certificado
 - [x] Verificar em telefone e desktop
+- [x] Redesenhar o certificado com acabamento cerimonial premium
