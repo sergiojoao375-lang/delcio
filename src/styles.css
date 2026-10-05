@@ -234,6 +234,24 @@
   pointer-events: none;
 }
 
+@media (max-width: 759px) {
+  .certificate-viewport {
+    position: relative;
+    aspect-ratio: 1.414 / 1;
+    overflow: hidden;
+  }
+
+  .certificate-viewport .certificate {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 760px;
+    min-width: 760px;
+    transform: scale(calc((100vw - 24px) / 760));
+    transform-origin: left top;
+  }
+}
+
 @media print {
   @page { size: A4 landscape; margin: 8mm; }
   body { background: var(--color-background); }

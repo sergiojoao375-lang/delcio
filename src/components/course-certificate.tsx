@@ -22,7 +22,7 @@ export function CourseCertificate({ details }: { details: CertificateDetails }) 
   }).format(new Date(details.issuedAt));
 
   return (
-    <div className="w-full overflow-x-auto pb-2">
+    <div className="certificate-viewport w-full">
     <article className="certificate relative aspect-[1.414/1] w-full min-w-[760px] overflow-hidden bg-certificate-paper p-4 text-center text-certificate-ink shadow-certificate">
       <div className="certificate-grain absolute inset-0" aria-hidden="true" />
       <div className="absolute inset-3 border-[5px] border-double border-certificate-copper sm:inset-4 sm:border-[8px]" aria-hidden="true" />
