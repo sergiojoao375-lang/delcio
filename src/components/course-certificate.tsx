@@ -36,7 +36,7 @@ export function CourseCertificate({ details }: { details: CertificateDetails }) 
         <ShieldCheck className="h-72 w-72 sm:h-96 sm:w-96" strokeWidth={0.7} />
       </div>
 
-      <div className="relative z-10 flex h-full flex-col items-center px-7 py-9 sm:px-16 sm:py-10">
+      <div className="relative z-10 flex min-h-[696px] flex-col items-center px-7 py-9 sm:h-full sm:min-h-0 sm:px-16 sm:py-10">
         <header className="flex flex-col items-center">
           <div className="grid h-12 w-12 place-items-center rounded-full border border-certificate-copper bg-certificate-green text-certificate-paper shadow-sm sm:h-16 sm:w-16">
             <Feather className="h-6 w-6 sm:h-8 sm:w-8" strokeWidth={1.4} />
