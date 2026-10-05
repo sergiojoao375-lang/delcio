@@ -91,10 +91,10 @@
 
   /* Certificate: ceremonial emerald and copper */
   --certificate-paper: oklch(0.96 0.018 82);
-  --certificate-ink: oklch(0.23 0.025 82);
-  --certificate-muted: oklch(0.46 0.025 83);
-  --certificate-green: oklch(0.32 0.07 166);
-  --certificate-copper: oklch(0.58 0.12 48);
+  --certificate-ink: oklch(0.16 0.025 82);
+  --certificate-muted: oklch(0.29 0.025 83);
+  --certificate-green: oklch(0.25 0.075 166);
+  --certificate-copper: oklch(0.48 0.13 48);
   --certificate-qr: oklch(1 0 0);
 
   --chart-1: oklch(0.62 0.13 158);
@@ -229,8 +229,8 @@
 
 .certificate-grain {
   background-image:
-    repeating-linear-gradient(0deg, transparent 0 3px, color-mix(in oklab, var(--certificate-green) 3%, transparent) 3px 4px),
-    repeating-linear-gradient(90deg, transparent 0 5px, color-mix(in oklab, var(--certificate-copper) 2%, transparent) 5px 6px);
+    repeating-linear-gradient(0deg, transparent 0 3px, color-mix(in oklab, var(--certificate-green) 1.5%, transparent) 3px 4px),
+    repeating-linear-gradient(90deg, transparent 0 5px, color-mix(in oklab, var(--certificate-copper) 1%, transparent) 5px 6px);
   pointer-events: none;
 }
 
