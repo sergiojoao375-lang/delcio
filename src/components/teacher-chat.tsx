@@ -1,5 +1,13 @@
 import { useEffect, useRef, useState } from "react";
-import { Send, Volume2 } from "lucide-react";
+import { Send } from "lucide-react";
+import {
+  extractSuggestions,
+  ListenButtons,
+  STARTER_SUGGESTIONS,
+  SuggestionChips,
+  TapText,
+  type Suggestion,
+} from "@/components/beginner-helpers";
 import { fetchWithRetry } from "@/lib/api-client";
 import { DEFAULT_VOICE_ID } from "@/lib/voices";
 import { addMessage, createConversation } from "@/lib/db.functions";
@@ -44,6 +52,7 @@ export function TeacherChat({
   voiceId?: string;
 }) {
   const [turns, setTurns] = useState<Turn[]>([]);
+  const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const conversationIdRef = useRef<string | null>(null);
@@ -137,10 +146,12 @@ export function TeacherChat({
       );
       if (!res.ok) throw new Error("O professor está indisponível agora.");
       const data = (await res.json()) as { content?: string };
-      const { correction, rest } = splitCorrection(stripScore(data.content || ""));
+      const ex = extractSuggestions(stripScore(data.content || ""));
+      setSuggestions(ex.suggestions);
+      const { correction, rest } = splitCorrection(ex.text);
       setTurns((prev) => [...prev, { id: uid(), role: "assistant", text: rest, correction }]);
       void persist("assistant", rest, correction);
-      void speak(correction ? `${correction}. ${rest}` : rest);
+      void speak(rest.split("\n").filter((l) => !l.trim().startsWith("🇧🇷")).join("\n"));
     } catch (e: any) {
       setTurns((prev) => [
         ...prev,
@@ -185,27 +196,33 @@ export function TeacherChat({
                   : "inline-block max-w-[85%] rounded-2xl bg-secondary px-4 py-2 text-left"
               }
             >
-              <p className="whitespace-pre-wrap text-sm">{t.text}</p>
-              {t.role === "assistant" && (
-                <button
-                  onClick={() => speak(t.text)}
-                  className="mt-1 inline-flex items-center gap-1 text-xs text-primary-dark hover:underline"
-                >
-                  <Volume2 className="h-3.5 w-3.5" /> Ouvir
-                </button>
+              {t.role === "assistant" ? (
+                <p className="whitespace-pre-wrap text-sm"><TapText text={t.text} /></p>
+              ) : (
+                <p className="whitespace-pre-wrap text-sm">{t.text}</p>
               )}
+              {t.role === "assistant" && <ListenButtons text={t.text} className="mt-1 text-primary-dark" />}
             </div>
           </div>
         ))}
         {loading && <p className="text-sm text-muted-foreground">Delcio está a escrever…</p>}
       </div>
 
+      {!loading && (
+        <div className="border-t border-border px-3 pt-3">
+          <SuggestionChips
+            suggestions={suggestions.length ? suggestions : turns.length ? [] : STARTER_SUGGESTIONS}
+            onPick={(s) => void send(s)}
+          />
+        </div>
+      )}
+
       <form
         onSubmit={(e) => {
           e.preventDefault();
           send();
         }}
-        className="flex gap-2 border-t border-border p-3"
+        className="flex gap-2 p-3"
       >
         <input
           value={input}

@@ -15,6 +15,7 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as CertificadoExemploRouteImport } from './routes/certificado-exemplo'
 import { Route as DebugRouteImport } from './routes/debug'
+import { Route as OfflineRouteImport } from './routes/offline'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedHistoricoRouteImport } from './routes/_authenticated/historico'
@@ -59,6 +60,11 @@ const CertificadoExemploRoute = CertificadoExemploRouteImport.update({
 const DebugRoute = DebugRouteImport.update({
   id: '/debug',
   path: '/debug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OfflineRoute = OfflineRouteImport.update({
+  id: '/offline',
+  path: '/offline',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -150,6 +156,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/certificado-exemplo': typeof CertificadoExemploRoute
   '/debug': typeof DebugRoute
+  '/offline': typeof OfflineRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/historico': typeof AuthenticatedHistoricoRoute
@@ -173,6 +180,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/certificado-exemplo': typeof CertificadoExemploRoute
   '/debug': typeof DebugRoute
+  '/offline': typeof OfflineRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/historico': typeof AuthenticatedHistoricoRoute
@@ -198,6 +206,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/certificado-exemplo': typeof CertificadoExemploRoute
   '/debug': typeof DebugRoute
+  '/offline': typeof OfflineRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/historico': typeof AuthenticatedHistoricoRoute
@@ -223,6 +232,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/certificado-exemplo'
     | '/debug'
+    | '/offline'
     | '/sitemap.xml'
     | '/admin'
     | '/historico'
@@ -246,6 +256,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/certificado-exemplo'
     | '/debug'
+    | '/offline'
     | '/sitemap.xml'
     | '/admin'
     | '/historico'
@@ -270,6 +281,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/certificado-exemplo'
     | '/debug'
+    | '/offline'
     | '/sitemap.xml'
     | '/_authenticated/admin'
     | '/_authenticated/historico'
@@ -295,6 +307,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   CertificadoExemploRoute: typeof CertificadoExemploRoute
   DebugRoute: typeof DebugRoute
+  OfflineRoute: typeof OfflineRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   ApiChatRoute: typeof ApiChatRoute
   ApiSttRoute: typeof ApiSttRoute
@@ -344,6 +357,13 @@ declare module '@tanstack/react-router' {
       path: '/debug'
       fullPath: '/debug'
       preLoaderRoute: typeof DebugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/offline': {
+      id: '/offline'
+      path: '/offline'
+      fullPath: '/offline'
+      preLoaderRoute: typeof OfflineRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sitemap.xml': {
@@ -499,6 +519,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   CertificadoExemploRoute: CertificadoExemploRoute,
   DebugRoute: DebugRoute,
+  OfflineRoute: OfflineRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   ApiChatRoute: ApiChatRoute,
   ApiSttRoute: ApiSttRoute,

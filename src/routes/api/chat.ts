@@ -7,7 +7,9 @@ type Body = {
   messages?: ChatMessage[];
   userName?: string;
   learningLang?: "en" | "pt";
-  mode?: "chat" | "translate";
+  mode?: "chat" | "translate" | "word";
+  word?: string;
+  sentence?: string;
   textToTranslate?: string;
   voiceMode?: boolean;
   lessonContext?: string;
@@ -46,7 +48,16 @@ export const Route = createFileRoute("/api/chat")({
 
         let messages: ChatMessage[] = [];
 
-        if (body.mode === "translate" && body.textToTranslate) {
+        if (body.mode === "word" && body.word) {
+          messages = [
+            {
+              role: "system",
+              content:
+                "Translate the given English word to European/Brazilian Portuguese as used in the sentence. Reply with ONLY 1-4 words, no quotes, no explanation.",
+            },
+            { role: "user", content: `Word: ${String(body.word).slice(0, 40)}\nSentence: ${String(body.sentence ?? "").slice(0, 400)}` },
+          ];
+        } else if (body.mode === "translate" && body.textToTranslate) {
           const target = body.learningLang === "en" ? "Português (Brazilian)" : "English";
           messages = [
             {
@@ -58,6 +69,9 @@ export const Route = createFileRoute("/api/chat")({
         } else {
           const userName = body.userName || "amigo";
           const learningLang = (body.learningLang || "en") as "en" | "pt";
+          const isBeginner = !body.level || body.level === "beginner";
+          const native = learningLang === "en" ? "Portuguese" : "English";
+          const target = learningLang === "en" ? "English" : "Portuguese";
           messages = [
             {
               role: "system",
@@ -66,6 +80,10 @@ export const Route = createFileRoute("/api/chat")({
                 (body.level
                   ? `\n\nSTUDENT LEVEL: ${String(body.level).slice(0, 20)} (beginner=A1, elementary=A2, intermediate=B1, advanced=B2). Adapt vocabulary, sentence length and complexity to this level.`
                   : "") +
+                (isBeginner
+                  ? `\n\nBILINGUAL BEGINNER MODE (overrides rule 2): the student knows almost no ${target}. Use very short ${target} sentences (max 8 words each). After your ${target} text, add ONE line starting with "🇧🇷 " giving the ${native} translation plus a tiny encouraging tip on how to answer. Always praise effort warmly.`
+                  : "") +
+                `\n\nQUICK REPLIES: after the score tag, append EXACTLY one line: <suggestions>["<short ${target} reply>|<${native} translation>", "...", "..."]</suggestions> with 3 simple, natural answers the student could give to your question${isBeginner ? " (very easy, 2-6 words)" : ""}.` +
                 (body.lessonContext
                   ? `\n\nCURRENT LESSON CONTEXT (use it to guide the student, ask about it, and check their answers to its exercises):\n${body.lessonContext.slice(0, 4000)}`
                   : ""),

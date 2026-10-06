@@ -14,6 +14,14 @@ import { getLearner } from "@/lib/learning.functions";
 import { usePractice } from "@/hooks/use-practice";
 import { Sheet, SheetClose, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
+import {
+  extractSuggestions,
+  ListenButtons,
+  STARTER_SUGGESTIONS,
+  SuggestionChips,
+  TapText,
+  type Suggestion,
+} from "@/components/beginner-helpers";
 
 
 
@@ -84,6 +92,7 @@ function Index() {
 
   const [bubbles, setBubbles] = useState<Bubble[]>([]);
   const [input, setInput] = useState("");
+  const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
   const [loading, setLoading] = useState(false);
   const [mode, setMode] = useState<"text" | "voice">("text");
   const [recording, setRecording] = useState(false);
@@ -514,9 +523,12 @@ function Index() {
         messages: [seedUser],
         userName: name,
         learningLang,
+        level: learner?.level,
       });
-      const { clean } = stripScore(content);
-      const { correction, rest } = splitCorrection(clean);
+      const { clean: clean0 } = stripScore(content);
+      const ex = extractSuggestions(clean0);
+      setSuggestions(ex.suggestions.length ? ex.suggestions : STARTER_SUGGESTIONS);
+      const { correction, rest } = splitCorrection(ex.text);
       const newBubbles: Bubble[] = [];
       if (correction)
         newBubbles.push({ id: uid(), kind: "correction", text: correction });
@@ -552,8 +564,10 @@ function Index() {
         level: learner?.level,
         voiceMode: mode === "voice",
       });
-      const { clean, correct } = stripScore(content);
-      const { correction, rest } = splitCorrection(clean);
+      const { clean: clean0, correct } = stripScore(content);
+      const ex = extractSuggestions(clean0);
+      setSuggestions(ex.suggestions);
+      const { correction, rest } = splitCorrection(ex.text);
 
       setBubbles((prev) => {
         const out = [...prev];
@@ -1131,7 +1145,8 @@ function Index() {
                 />
                 <div className="flex flex-col gap-1.5 max-w-[85%]">
                   <div className="rounded-2xl rounded-bl-sm bg-bot-bubble text-bot-bubble-foreground px-4 py-2.5 shadow whitespace-pre-line">
-                    {b.text}
+                    <TapText text={b.text} />
+                    <ListenButtons text={b.text} className="mt-1.5 flex opacity-90" />
                   </div>
                   {b.translation && (
                     <div className="rounded-2xl bg-translation text-translation-foreground px-4 py-2 italic text-sm shadow border border-blue-200/50">
@@ -1287,7 +1302,9 @@ function Index() {
               <RefreshCcw className="w-3.5 h-3.5" /> Recomeçar
             </button>
           </div>
-
+          {!loading && suggestions.length > 0 && (
+            <SuggestionChips suggestions={suggestions} onPick={(s) => void send(s)} />
+          )}
 
           <div className="flex items-center gap-2">
             <button
