@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from "react";
 import { Award, CheckCircle2, Feather, ShieldCheck } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import { LEVEL_LABEL, type Level } from "@/lib/levels";
@@ -21,8 +22,20 @@ export function CourseCertificate({ details }: { details: CertificateDetails }) 
     year: "numeric",
   }).format(new Date(details.issuedAt));
 
+  const boxRef = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(1);
+  useEffect(() => {
+    const el = boxRef.current;
+    if (!el) return;
+    const update = () => setScale(Math.min(1, el.clientWidth / 760));
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
   return (
-    <div className="certificate-viewport w-full">
+    <div ref={boxRef} className="certificate-viewport w-full" style={{ ["--cert-scale" as string]: scale }}>
     <article className="certificate relative aspect-[1.414/1] w-full min-w-[760px] overflow-hidden bg-certificate-paper p-4 text-center text-certificate-ink shadow-certificate">
       <div className="certificate-grain absolute inset-0" aria-hidden="true" />
       <div className="absolute inset-3 border-[5px] border-double border-certificate-copper sm:inset-4 sm:border-[8px]" aria-hidden="true" />

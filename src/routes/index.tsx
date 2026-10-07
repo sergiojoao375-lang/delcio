@@ -193,6 +193,34 @@ function Index() {
     if (name.trim()) localStorage.setItem("delcio.name", name.trim());
   }, [name]);
 
+  // Mantém a conversa ao voltar de outra página (não pede o nome de novo)
+  const restoredRef = useRef(false);
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem("delcio.chatSession");
+      if (raw) {
+        const s = JSON.parse(raw) as { name?: string; learningLang?: LearningLang; bubbles?: Bubble[] };
+        if (s.name && s.bubbles?.length) {
+          setName(s.name);
+          if (s.learningLang) setLearningLang(s.learningLang);
+          setBubbles(s.bubbles);
+          setStage("chat");
+        }
+      }
+    } catch {
+      /* ignore */
+    }
+    restoredRef.current = true;
+  }, []);
+  useEffect(() => {
+    if (!restoredRef.current) return;
+    if (stage === "chat" && bubbles.length) {
+      sessionStorage.setItem("delcio.chatSession", JSON.stringify({ name, learningLang, bubbles: bubbles.slice(-60) }));
+    } else if (stage === "welcome") {
+      sessionStorage.removeItem("delcio.chatSession");
+    }
+  }, [stage, bubbles, name, learningLang]);
+
   async function ensureConversation() {
     if (!signedIn) return null;
     if (conversationIdRef.current) return conversationIdRef.current;

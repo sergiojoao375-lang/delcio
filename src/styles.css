@@ -247,7 +247,7 @@
     top: 0;
     width: 760px;
     min-width: 760px;
-    transform: scale(calc((100vw - 24px) / 760));
+    transform: scale(var(--cert-scale, 0.45));
     transform-origin: left top;
   }
 }
