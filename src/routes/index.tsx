@@ -987,6 +987,7 @@ function Index() {
                     { to: "/pronuncia" as const, label: "Pronúncia", icon: SpellCheck, show: signedIn },
                     { to: "/progresso" as const, label: "Progresso", icon: TrendingUp, show: signedIn },
                     { to: "/historico" as const, label: "Histórico", icon: History, show: signedIn },
+                    { to: "/offline" as const, label: "Aulas guardadas", icon: BookOpen, show: true },
                     { to: "/admin" as const, label: "Painel", icon: Settings, show: isAdmin },
                     { to: "/about" as const, label: "Sobre", icon: Info, show: true },
                   ].filter((item) => item.show).map((item) => (

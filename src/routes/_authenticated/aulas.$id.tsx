@@ -1,6 +1,9 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { Download } from "lucide-react";
+import { TapText } from "@/components/beginner-helpers";
+import { isLessonSaved, saveLessonOffline } from "@/lib/offline-lessons";
 import { getLesson } from "@/lib/db.functions";
 import { gradeExercise } from "@/lib/learning.functions";
 import { usePractice } from "@/hooks/use-practice";
@@ -150,11 +153,16 @@ function LessonPage() {
   const audioSrc = useAudioSrc(lesson.audio_url);
   usePractice(true);
   const [name, setName] = useState("amigo");
+  const [saved, setSaved] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [rate, setRate] = useState(1);
+  const audioEl = useRef<HTMLAudioElement>(null);
 
   useEffect(() => {
     const stored = localStorage.getItem("delcio.name");
     if (stored) setName(stored);
-  }, []);
+    setSaved(isLessonSaved(lesson.id));
+  }, [lesson.id]);
 
   const lessonContext = [
     `Lesson title: ${lesson.title}`,
@@ -190,13 +198,53 @@ function LessonPage() {
             <span>{lesson.language === "en" ? "Inglês" : "Português"}</span>
           </div>
 
+          <div className="mt-3 flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              disabled={saving}
+              onClick={async () => {
+                setSaving(true);
+                await saveLessonOffline(
+                  {
+                    id: lesson.id,
+                    title: lesson.title,
+                    description: lesson.description ?? null,
+                    level: lesson.level,
+                    language: lesson.language,
+                    body: lesson.body,
+                    exercises: lesson.exercises.map((e) => ({ id: e.id, question: e.question, answer: e.answer ?? null, hint: e.hint ?? null })),
+                  },
+                  audioSrc,
+                );
+                setSaved(true);
+                setSaving(false);
+              }}
+              className="inline-flex items-center gap-1 rounded-xl bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground disabled:opacity-60"
+            >
+              <Download className="h-4 w-4" /> {saving ? "A guardar…" : saved ? "Guardada offline ✓" : "Guardar offline"}
+            </button>
+            {saved && (
+              <Link to="/offline" className="text-sm text-primary hover:underline">Ver aulas guardadas</Link>
+            )}
+          </div>
+
           {audioSrc && (
-            <audio controls src={audioSrc} className="mt-4 w-full">
-              O seu navegador não suporta áudio.
-            </audio>
+            <>
+              <audio ref={audioEl} controls src={audioSrc} className="mt-4 w-full">
+                O seu navegador não suporta áudio.
+              </audio>
+              <div className="mt-1 flex gap-2 text-xs">
+                {[0.75, 1].map((r) => (
+                  <button key={r} type="button" onClick={() => { setRate(r); if (audioEl.current) audioEl.current.playbackRate = r; }}
+                    className={`rounded-full px-3 py-1 border border-border ${rate === r ? "bg-primary text-primary-foreground" : "bg-secondary"}`}>
+                    {r === 0.75 ? "🐢 0.75x" : "1x"}
+                  </button>
+                ))}
+              </div>
+            </>
           )}
 
-          <div className="mt-4 whitespace-pre-wrap leading-relaxed">{lesson.body}</div>
+          <div className="mt-4 whitespace-pre-wrap leading-relaxed"><TapText text={lesson.body} /></div>
         </article>
 
         {lesson.exercises.length > 0 && (
